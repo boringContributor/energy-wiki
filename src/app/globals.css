@@ -1,26 +1,281 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ------------------------------------------------------------------ *
+ * Design tokens
+ *
+ * Built on the epilot brand palette (epilot.cloud): the purple #4c4cff
+ * carries every action, and the seven topic tones are taken from the same
+ * brand set — amber-orange, light-purple, turquoise, red, violet, pink and a
+ * neutral grey — so they stay distinguishable without inventing new hues.
+ * ------------------------------------------------------------------ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #fbfbfc;
+  --bg-subtle: #f4f4f6;
+  --surface: #ffffff;
+  --surface-2: #f7f7f8;
+  --border: #e8e8ea;
+  --border-strong: #d2d2d8;
+  --fg: #161616;
+  --fg-muted: #475467;
+  --fg-subtle: #878787;
+  --accent: #4c4cff;
+  --accent-hover: #3b3be6;
+  --accent-fg: #ffffff;
+  --accent-soft: #ededff;
+  --accent-ring: #4c4cff33;
+
+  --strom: #bf7420;
+  --strom-soft: #fdf1e3;
+  --gas: #6455e0;
+  --gas-soft: #eeecfd;
+  --wasser: #0b8ba6;
+  --wasser-soft: #e2f5f9;
+  --waerme: #d24545;
+  --waerme-soft: #fceceb;
+  --markt: #8e33d6;
+  --markt-soft: #f4e9fd;
+  --messung: #c93fa5;
+  --messung-soft: #fbe9f5;
+  --recht: #6f6f78;
+  --recht-soft: #f1f1f3;
+
+  --shadow-sm: 0 1px 2px rgb(22 22 34 / 0.05);
+  --shadow-md: 0 4px 16px -6px rgb(22 22 34 / 0.14);
+}
+
+.dark {
+  --bg: #0a0a14;
+  --bg-subtle: #101020;
+  --surface: #101020;
+  --surface-2: #17172b;
+  --border: #23233c;
+  --border-strong: #343455;
+  --fg: #eeeef4;
+  --fg-muted: #a5a5bb;
+  --fg-subtle: #75758c;
+  --accent: #8a86ff;
+  --accent-hover: #a29fff;
+  --accent-fg: #0a0a1e;
+  --accent-soft: #1b1b3a;
+  --accent-ring: #8a86ff44;
+
+  --strom: #fe9f47;
+  --strom-soft: #2a1f12;
+  --gas: #8f82ff;
+  --gas-soft: #1b1836;
+  --wasser: #25d5f5;
+  --wasser-soft: #0e2a33;
+  --waerme: #ff7a7a;
+  --waerme-soft: #2e1616;
+  --markt: #c586ff;
+  --markt-soft: #241432;
+  --messung: #ff7fd5;
+  --messung-soft: #2e1428;
+  --recht: #a3a3b0;
+  --recht-soft: #1f1f28;
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.5);
+  --shadow-md: 0 4px 20px -8px rgb(0 0 0 / 0.7);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-bg-subtle: var(--bg-subtle);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border-base: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-soft: var(--accent-soft);
+
+  --color-strom: var(--strom);
+  --color-strom-soft: var(--strom-soft);
+  --color-gas: var(--gas);
+  --color-gas-soft: var(--gas-soft);
+  --color-wasser: var(--wasser);
+  --color-wasser-soft: var(--wasser-soft);
+  --color-waerme: var(--waerme);
+  --color-waerme-soft: var(--waerme-soft);
+  --color-markt: var(--markt);
+  --color-markt-soft: var(--markt-soft);
+  --color-messung: var(--messung);
+  --color-messung-soft: var(--messung-soft);
+  --color-recht: var(--recht);
+  --color-recht-soft: var(--recht-soft);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --text-2xs: 0.6875rem;
+
+  --breakpoint-3xl: 100rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--accent-soft);
+    color: var(--fg);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /* Thin, unobtrusive scrollbars for the nav rails */
+  .rail-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+  .rail-scroll::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .rail-scroll::-webkit-scrollbar-thumb {
+    background-color: var(--border-strong);
+    border-radius: 999px;
+  }
+  .rail-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Motion — deliberately small. Everything respects reduced motion.
+ * ------------------------------------------------------------------ */
+@keyframes ew-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ew-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ew-draw {
+  from {
+    stroke-dashoffset: var(--dash, 400);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes ew-flow {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+@keyframes ew-pulse-soft {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes ew-spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.ew-rise {
+  animation: ew-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.ew-fade {
+  animation: ew-fade 0.6s ease both;
+}
+.ew-flow {
+  stroke-dasharray: 5 7;
+  animation: ew-flow 1.2s linear infinite;
+}
+.ew-pulse-soft {
+  animation: ew-pulse-soft 3.2s ease-in-out infinite;
+}
+.ew-spin-slow {
+  animation: ew-spin-slow 14s linear infinite;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ew-rise,
+  .ew-fade,
+  .ew-flow,
+  .ew-pulse-soft,
+  .ew-spin-slow {
+    animation: none !important;
+  }
+}
+
+/* Print: strip chrome, keep the article readable */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+    color: #000;
+  }
 }
