@@ -3,6 +3,7 @@ import { categories } from "./categories";
 
 import { grundlagenArticles } from "./articles/grundlagen";
 import { spartenArticles } from "./articles/sparten";
+import { anlagenArticles } from "./articles/anlagen";
 import { tarifeArticles } from "./articles/tarife";
 import { messwesenArticles } from "./articles/messwesen";
 import { abrechnungArticles } from "./articles/abrechnung";
@@ -12,6 +13,7 @@ import { rechtArticles } from "./articles/recht";
 export const articles: Article[] = [
   ...grundlagenArticles,
   ...spartenArticles,
+  ...anlagenArticles,
   ...tarifeArticles,
   ...messwesenArticles,
   ...abrechnungArticles,

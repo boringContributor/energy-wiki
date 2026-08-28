@@ -505,7 +505,7 @@ export const rechtArticles: Article[] = [
         {
           t: "ul",
           items: [
-            "Wärmepumpen, nicht öffentliche Ladepunkte, Klimaanlagen und Batteriespeicher",
+            "[[waermepumpe|Wärmepumpen]], nicht öffentliche Ladepunkte ([[wallbox|Wallbox]]), Klimaanlagen und [[batteriespeicher|Batteriespeicher]]",
             "mit einer Leistung von **mehr als 4,2 kW**",
             "die **ab dem 1. Januar 2024** neu ans Netz angemeldet wurden",
           ],
@@ -532,7 +532,7 @@ export const rechtArticles: Article[] = [
         },
       ],
     },
-    related: ["netzentgelte", "intelligentes-messsystem", "dynamischer-tarif", "enwg"],
+    related: ["waermepumpe", "wallbox", "netzentgelte", "intelligentes-messsystem"],
     sources: [
       {
         label: "Bundesnetzagentur – Integration steuerbarer Verbrauchseinrichtungen",

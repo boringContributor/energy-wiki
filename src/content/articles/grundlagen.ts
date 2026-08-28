@@ -88,7 +88,7 @@ export const grundlagenArticles: Article[] = [
         },
       ],
     },
-    related: ["marktrollen", "netzbetreiber", "bilanzkreis", "tarif"],
+    related: ["marktrollen", "netzbetreiber", "erzeugungsanlagen", "tarif"],
     sources: [
       {
         label: "Bundesnetzagentur – Verbraucherportal Energie",

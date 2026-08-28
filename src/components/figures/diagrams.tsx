@@ -14,14 +14,14 @@ function Frame({
 }) {
   return (
     <div className="@container overflow-hidden rounded-2xl border border-border-base bg-surface">
-      <div className="flex flex-wrap items-baseline gap-x-3 border-b border-border-base bg-surface-2 px-4 py-3 @md:px-5">
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 border-b border-border-base bg-surface-2 px-5 py-3.5 @xl:px-6">
         <p className="text-sm font-medium text-fg">{title}</p>
         {hint && <p className="text-xs text-fg-subtle">{hint}</p>}
       </div>
-      <div className="p-4 @md:p-5">{children}</div>
+      <div className="p-5 @xl:p-6">{children}</div>
       {footer && (
-        <div className="border-t border-border-base bg-surface-2 px-4 py-3 text-xs leading-6 text-fg-subtle @md:px-5">
-          {footer}
+        <div className="border-t border-border-base bg-surface-2 px-5 py-4 @xl:px-6">
+          <p className="max-w-[68ch] text-xs leading-6 text-fg-subtle">{footer}</p>
         </div>
       )}
     </div>
@@ -75,20 +75,24 @@ export function Wertschoepfungskette() {
       {/* One markup, two readings: a vertical rail while the column is narrow,
           a horizontal one once there is room for five steps side by side.
           Dropping the cards frees the width the labels actually need. */}
-      <ol className="relative grid gap-x-3 gap-y-5 @2xl:grid-cols-5">
+      <ol className="relative grid gap-x-6 gap-y-6 @4xl:grid-cols-5">
         <span
           aria-hidden
-          className="absolute bottom-5 left-[1.125rem] top-5 w-px bg-[var(--border)] @2xl:hidden"
+          className="absolute bottom-5 left-[1.125rem] top-5 w-px bg-[var(--border)] @4xl:hidden"
         />
-        <span
-          aria-hidden
-          className="absolute left-5 right-5 top-[1.125rem] hidden h-px bg-[var(--border)] @2xl:block"
-        />
-        {CHAIN.map((step) => (
+        {CHAIN.map((step, i) => (
           <li
             key={step.title}
-            className="relative flex gap-3.5 @2xl:flex-col @2xl:gap-2.5"
+            /* min-w-0: grid items default to min-width:auto, which lets long
+               German compounds push past their column instead of wrapping. */
+            className="relative flex min-w-0 gap-4 @4xl:flex-col @4xl:gap-3"
           >
+            {i < CHAIN.length - 1 && (
+              <span
+                aria-hidden
+                className="absolute left-11 top-[1.125rem] hidden h-px w-[calc(100%-2rem)] bg-[var(--border)] @4xl:block"
+              />
+            )}
             <span
               className="relative z-10 flex size-9 shrink-0 items-center justify-center rounded-lg"
               style={{
@@ -841,6 +845,138 @@ export function PortalFunktionen() {
             />
             <p className="mt-2.5 text-sm font-medium text-fg">{f.title}</p>
             <p className="mt-1 text-xs leading-5 text-fg-muted">{f.text}</p>
+          </li>
+        ))}
+      </ul>
+    </Frame>
+  );
+}
+
+/* ------------------------------------------------------------------ *
+ * Anlagen beim Kunden
+ * ------------------------------------------------------------------ */
+
+const ANLAGEN = [
+  { n: "1", name: "Photovoltaik", text: "Erzeugt Strom auf dem Dach. Ab 2 kW seit Februar 2025 mit Steuerbox und iMSys.", tone: "var(--strom)" },
+  { n: "2", name: "Wärmepumpe", text: "Macht aus einer Kilowattstunde Strom drei bis vier Kilowattstunden Wärme.", tone: "var(--anlage)" },
+  { n: "3", name: "Batteriespeicher", text: "Verschiebt PV-Strom vom Mittag in den Abend und hebt die Eigenverbrauchsquote.", tone: "var(--markt)" },
+  { n: "4", name: "Wallbox", text: "Lädt das Auto mit meist 11 kW. Über 4,2 kW fällt sie unter § 14a EnWG.", tone: "var(--gas)" },
+  { n: "5", name: "Zählerplatz", text: "Zweirichtungszähler plus Smart-Meter-Gateway – der Übergabepunkt zum Netz.", tone: "var(--messung)" },
+  { n: "6", name: "Warmwasserspeicher", text: "Puffert Wärme und ist damit selbst ein Speicher für PV-Überschuss.", tone: "var(--waerme)" },
+];
+
+export function AnlagenUebersicht() {
+  return (
+    <Frame
+      title="Was heute alles hinter dem Zähler steht"
+      hint="Ein Haushalt ist längst kein reiner Verbraucher mehr"
+      footer="Jedes dieser Geräte verändert etwas am Vertragsverhältnis: die PV-Anlage braucht eine zweite Marktlokation, Wärmepumpe und Wallbox fallen unter § 14a EnWG, der Speicher verschiebt den Verbrauch in andere Stunden. Aus dem Letztverbraucher wird ein Prosumer – jemand, der zugleich verbraucht und erzeugt."
+    >
+      <div className="grid gap-6 @2xl:grid-cols-[minmax(0,22rem)_1fr] @2xl:items-start">
+        <svg viewBox="0 0 340 240" className="w-full" aria-hidden>
+          {/* Grund */}
+          <line x1="10" y1="215" x2="330" y2="215" stroke="var(--border-strong)" strokeWidth="1.5" />
+          {/* Haus */}
+          <path d="M60 120 L140 62 L220 120" fill="none" stroke="var(--border-strong)" strokeWidth="2" strokeLinejoin="round" />
+          <path d="M72 120 V215 M208 120 V215 M72 215 H208" fill="none" stroke="var(--border-strong)" strokeWidth="2" />
+          {/* PV auf dem Dach */}
+          <path d="M78 116 L140 71 L154 81 L92 126 Z" fill="var(--strom-soft)" stroke="var(--strom)" strokeWidth="2" strokeLinejoin="round" />
+          <path d="M99 108 L160 63 M89 101 L150 56" stroke="var(--strom)" strokeWidth="0.9" opacity="0.5" />
+          <circle cx="106" cy="94" r="9" fill="var(--surface)" stroke="var(--strom)" strokeWidth="1.5" />
+          <text x="106" y="98" fontSize="10" textAnchor="middle" fill="var(--strom)" fontFamily="var(--font-mono)">1</text>
+          {/* Wärmepumpe außen */}
+          <rect x="234" y="168" width="42" height="34" rx="4" fill="var(--anlage-soft)" stroke="var(--anlage)" strokeWidth="2" />
+          <circle cx="255" cy="185" r="9" fill="none" stroke="var(--anlage)" strokeWidth="1.5" />
+          <path d="M255 178 v14 M248 185 h14" stroke="var(--anlage)" strokeWidth="1.5" className="ew-spin-slow" style={{ transformOrigin: "255px 185px" }} />
+          <circle cx="286" cy="164" r="9" fill="var(--surface)" stroke="var(--anlage)" strokeWidth="1.5" />
+          <text x="286" y="168" fontSize="10" textAnchor="middle" fill="var(--anlage)" fontFamily="var(--font-mono)">2</text>
+          {/* Speicher */}
+          <rect x="86" y="170" width="26" height="36" rx="3" fill="var(--markt-soft)" stroke="var(--markt)" strokeWidth="2" />
+          <path d="M92 196 h14 M92 189 h14" stroke="var(--markt)" strokeWidth="1.4" />
+          <circle cx="76" cy="164" r="9" fill="var(--surface)" stroke="var(--markt)" strokeWidth="1.5" />
+          <text x="76" y="168" fontSize="10" textAnchor="middle" fill="var(--markt)" fontFamily="var(--font-mono)">3</text>
+          {/* Wallbox */}
+          <rect x="16" y="168" width="22" height="30" rx="3" fill="var(--gas-soft)" stroke="var(--gas)" strokeWidth="2" />
+          <path d="M27 198 q0 10 14 10" fill="none" stroke="var(--gas)" strokeWidth="1.6" />
+          <circle cx="27" cy="158" r="9" fill="var(--surface)" stroke="var(--gas)" strokeWidth="1.5" />
+          <text x="27" y="162" fontSize="10" textAnchor="middle" fill="var(--gas)" fontFamily="var(--font-mono)">4</text>
+          {/* Zählerplatz */}
+          <rect x="126" y="168" width="28" height="38" rx="3" fill="var(--messung-soft)" stroke="var(--messung)" strokeWidth="2" />
+          <path d="M133 186 a7 7 0 0 1 14 0" fill="none" stroke="var(--messung)" strokeWidth="1.5" />
+          <circle cx="140" cy="186" r="1.6" fill="var(--messung)" />
+          <circle cx="140" cy="158" r="9" fill="var(--surface)" stroke="var(--messung)" strokeWidth="1.5" />
+          <text x="140" y="162" fontSize="10" textAnchor="middle" fill="var(--messung)" fontFamily="var(--font-mono)">5</text>
+          {/* Warmwasserspeicher */}
+          <rect x="170" y="164" width="24" height="42" rx="10" fill="var(--waerme-soft)" stroke="var(--waerme)" strokeWidth="2" />
+          <circle cx="182" cy="154" r="9" fill="var(--surface)" stroke="var(--waerme)" strokeWidth="1.5" />
+          <text x="182" y="158" fontSize="10" textAnchor="middle" fill="var(--waerme)" fontFamily="var(--font-mono)">6</text>
+          {/* Netzanschluss */}
+          <path d="M208 140 H300 V215" fill="none" stroke="var(--accent)" strokeWidth="2" className="ew-flow" />
+        </svg>
+
+        <ol className="grid gap-3 @md:grid-cols-2 @2xl:grid-cols-1 @4xl:grid-cols-2">
+          {ANLAGEN.map((a) => (
+            <li key={a.n} className="flex min-w-0 gap-3">
+              <span
+                className="flex size-6 shrink-0 items-center justify-center rounded-full font-mono text-2xs font-semibold"
+                style={{
+                  background: `color-mix(in srgb, ${a.tone} 16%, var(--surface))`,
+                  color: a.tone,
+                }}
+              >
+                {a.n}
+              </span>
+              <span className="min-w-0">
+                <span className="block text-sm font-medium text-fg">{a.name}</span>
+                <span className="mt-0.5 block text-xs leading-5 text-fg-muted">{a.text}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </Frame>
+  );
+}
+
+/* ------------------------------------------------------------------ *
+ * Heizsysteme im Vergleich
+ * ------------------------------------------------------------------ */
+
+const HEIZUNGEN = [
+  { name: "Wärmepumpe", traeger: "Strom", effizienz: 370, effLabel: "JAZ 3,7", co2: "abhängig vom Strommix, sinkend", tone: "var(--anlage)" },
+  { name: "Fernwärme", traeger: "Wärmenetz", effizienz: 100, effLabel: "keine eigene Umwandlung", co2: "abhängig vom Erzeugungsmix", tone: "var(--wasser)" },
+  { name: "Gas-Brennwert", traeger: "Erdgas", effizienz: 92, effLabel: "92 % Nutzungsgrad", co2: "rund 0,18 kg je kWh", tone: "var(--gas)" },
+  { name: "Pelletkessel", traeger: "Holzpellets", effizienz: 88, effLabel: "88 % Nutzungsgrad", co2: "bilanziell nahezu neutral", tone: "var(--strom)" },
+  { name: "Ölheizung", traeger: "Heizöl", effizienz: 88, effLabel: "88 % Nutzungsgrad", co2: "rund 0,27 kg je kWh", tone: "var(--waerme)" },
+  { name: "Direktstromheizung", traeger: "Strom", effizienz: 99, effLabel: "99 % – aber 1 kWh je kWh", co2: "abhängig vom Strommix", tone: "var(--recht)" },
+];
+
+export function Heizungsvergleich() {
+  const max = Math.max(...HEIZUNGEN.map((h) => h.effizienz));
+  return (
+    <Frame
+      title="Heizsysteme im Vergleich"
+      hint="Wie viel Wärme aus einer Einheit Energie wird"
+      footer="Der Balken zeigt, wie viele Kilowattstunden Wärme aus einer Kilowattstunde eingekaufter Energie entstehen. Nur die Wärmepumpe kommt über 100 %, weil sie Umweltwärme dazuholt statt Brennstoff zu verbrennen – deshalb ist sie trotz des höheren Strompreises meist günstiger im Betrieb."
+    >
+      <ul className="space-y-4">
+        {HEIZUNGEN.map((h) => (
+          <li key={h.name}>
+            <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+              <span className="text-sm font-medium text-fg">{h.name}</span>
+              <span className="font-mono text-xs tabular-nums text-fg-muted">
+                {h.effizienz} %
+              </span>
+            </div>
+            <div className="mt-1.5 h-5 overflow-hidden rounded-md bg-surface-2">
+              <div
+                className="h-full"
+                style={{ width: `${(h.effizienz / max) * 100}%`, background: h.tone }}
+              />
+            </div>
+            <p className="mt-1 text-2xs text-fg-subtle">
+              {h.traeger} · {h.effLabel} · {h.co2}
+            </p>
           </li>
         ))}
       </ul>

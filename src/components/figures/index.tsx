@@ -15,7 +15,14 @@ import {
   LastprofilChart,
 } from "./charts";
 import {
+  PvRechner,
+  WaermepumpeRechner,
+  WaermepumpenTypen,
+} from "./anlagen";
+import {
+  AnlagenUebersicht,
   Blindleistung,
+  Heizungsvergleich,
   Lieferantenwechsel,
   MaloMelo,
   Marktrollen,
@@ -55,6 +62,11 @@ export const figures = {
   "rechnung-anatomie": RechnungAnatomie,
   blindleistung: Blindleistung,
   "portal-funktionen": PortalFunktionen,
+  "anlagen-uebersicht": AnlagenUebersicht,
+  "pv-rechner": PvRechner,
+  "waermepumpe-rechner": WaermepumpeRechner,
+  "waermepumpen-typen": WaermepumpenTypen,
+  heizungsvergleich: Heizungsvergleich,
 } as const;
 
 export type FigureId = keyof typeof figures;

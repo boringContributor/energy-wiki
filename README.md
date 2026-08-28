@@ -20,13 +20,14 @@ pnpm check          # Inhaltsprüfung + Lint + Build
 ```
 src/
   app/[locale]/            Root-Layout (de|en), Startseite, 404
+    [...rest]/             Catch-all, damit unbekannte URLs die eigene 404 sehen
     (docs)/                Layout mit Sidebar
       wissen/[slug]/       Artikelseite
       thema/[category]/    Themenübersicht
       glossar/             A–Z
   content/
     types.ts               Blockmodell für Artikelinhalte
-    categories.ts          Die sieben Themen
+    categories.ts          Die acht Themen
     articles/*.ts          Die Artikel, ein File je Thema
   components/
     content/               Renderer für Blöcke und Rich Text
@@ -81,6 +82,14 @@ In jedem Textfeld erlaubt:
 `note` kennt fünf Sorten: `info`, `tip`, `warn`, `law` (Rechtsgrundlage) und
 `praxis` (was in echten Projekten schiefgeht).
 
+### Responsive Grafiken
+
+Figuren stehen in einer rund 48 rem breiten Artikelspalte, nicht im Viewport.
+Deshalb arbeiten `FigureShell` und `Frame` mit `@container`, und die Grafiken
+darin benutzen Container-Varianten (`@md:`, `@xl:`, `@2xl:`) statt `sm:`/`lg:`.
+Wer eine neue Grafik baut, sollte das übernehmen – sonst schaltet ein
+Fünf-Spalten-Layout um, während die Spalte noch schmal ist.
+
 ### Grafiken einbinden
 
 ```ts
@@ -94,16 +103,26 @@ Wiki-Links und Grafiken, die nirgends verwendet werden.
 
 ## Zahlen und Stände
 
-Alle regulierten Werte sind auf dem Stand 2026: KWKG-Umlage 0,446 ct/kWh,
-Offshore-Netzumlage 0,941 ct/kWh, Aufschlag für besondere Netznutzung
-1,559 ct/kWh, Stromsteuer 2,05 ct/kWh, Energiesteuer Erdgas 0,55 ct/kWh,
-CO₂-Preis im Korridor 55–65 €/t, Gasspeicherumlage entfallen. Beschaffung,
-Vertrieb und Netzentgelte sind Modellwerte und als solche gekennzeichnet.
+Alle regulierten Werte sind auf dem Stand 2026:
 
-Diese Werte ändern sich jährlich – die Umlagen der Übertragungsnetzbetreiber
-Mitte Oktober für das Folgejahr. Betroffen sind
-`src/components/figures/calculators.tsx` sowie die Artikel unter
-`src/content/articles/recht.ts` und `tarife.ts`.
+- **Strom** – KWKG-Umlage 0,446 ct/kWh, Offshore-Netzumlage 0,941 ct/kWh,
+  Aufschlag für besondere Netznutzung 1,559 ct/kWh, Stromsteuer 2,05 ct/kWh
+- **Gas** – Energiesteuer 0,55 ct/kWh, CO₂-Preis im Korridor 55–65 €/t,
+  Gasspeicherumlage entfallen
+- **Photovoltaik** – Einspeisevergütung ab August 2026: 7,70 ct/kWh
+  (Überschuss) bzw. 12,22 ct/kWh (Volleinspeisung) bis 10 kW; Solarspitzengesetz
+  seit 25. Februar 2025
+- **Heizung** – Gebäudemodernisierungsgesetz seit 29. Juli 2026, die
+  65-%-Pflicht ist entfallen, an ihre Stelle tritt die Bio-Treppe ab 2029
+
+Beschaffung, Vertrieb und Netzentgelte sind Modellwerte und als solche
+gekennzeichnet.
+
+Diese Werte ändern sich laufend – die Umlagen der Übertragungsnetzbetreiber
+Mitte Oktober für das Folgejahr, die Einspeisevergütung halbjährlich um ein
+Prozent. Betroffen sind `src/components/figures/calculators.tsx` und
+`anlagen.tsx` sowie die Artikel unter `src/content/articles/recht.ts`,
+`tarife.ts` und `anlagen.ts`.
 
 ## Animationen
 
@@ -128,10 +147,14 @@ Bewegung ist zurückhaltend und respektiert überall `prefers-reduced-motion`.
 
 ## Design
 
-Die Palette folgt der epilot-Marke: `#4c4cff` trägt jede Aktion, die sieben
+Die Palette folgt der epilot-Marke: `#4c4cff` trägt jede Aktion. Die
 Themenfarben (`--strom`, `--gas`, `--wasser`, `--waerme`, `--markt`,
 `--messung`, `--recht`) kommen aus demselben Markenset – Amber, Light-Purple,
-Türkis, Rot, Violett, Pink und ein neutrales Grau.
+Türkis, Rot, Violett, Pink und ein neutrales Grau. `--anlage` ergänzt ein Grün
+aus dem Systemfarben-Token für die achte Kategorie.
+
+Das Tab-Icon liegt als `src/app/icon.svg` (Next-Konvention) und zeigt dasselbe
+Zählerzifferblatt wie die Wortmarke im Header.
 
 Tokens liegen als CSS-Variablen in `src/app/globals.css` und sind über
 `@theme inline` als Tailwind-Klassen verfügbar (`bg-surface`, `text-fg-muted`,

@@ -100,7 +100,7 @@ export const messwesenArticles: Article[] = [
         },
       ],
     },
-    related: ["zaehler", "intelligentes-messsystem", "lastprofil", "messstellenbetrieb"],
+    related: ["zaehler", "intelligentes-messsystem", "photovoltaik", "messstellenbetrieb"],
   },
 
   {

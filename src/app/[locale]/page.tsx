@@ -12,7 +12,7 @@ const START_HERE = [
   "energiemarkt-ueberblick",
   "tarif",
   "zaehler",
-  "abschlagszahlung",
+  "photovoltaik",
 ];
 
 const INTERACTIVE: {
@@ -39,6 +39,16 @@ const INTERACTIVE: {
     slug: "dynamischer-tarif",
     label: { de: "Dynamischen Tarif simulieren", en: "Simulate a dynamic tariff" },
     hint: { de: "24 Stunden Börsenpreis", en: "24 hours of spot prices" },
+  },
+  {
+    slug: "photovoltaik",
+    label: { de: "PV-Anlage durchrechnen", en: "Model a solar array" },
+    hint: { de: "Ertrag, Eigenverbrauch, Amortisation", en: "Yield, self-use, payback" },
+  },
+  {
+    slug: "waermepumpe",
+    label: { de: "Wärmepumpe gegen Gas", en: "Heat pump vs. gas" },
+    hint: { de: "Jahresarbeitszahl und Kipppunkt", en: "Seasonal performance and break-even" },
   },
 ];
 
@@ -101,7 +111,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
                 label={s("topics", l)}
               />
               <Stat
-                value="22"
+                value="27"
                 label={l === "de" ? "Interaktive Grafiken" : "Interactive figures"}
               />
             </dl>
@@ -164,7 +174,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
                 : "Touch the numbers instead of reading formulas"
             }
           />
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {INTERACTIVE.map((item) => (
               <Link
                 key={item.slug + item.label.de}

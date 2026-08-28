@@ -22,6 +22,19 @@ export const categories: Category[] = [
     icon: "bolt",
   },
   {
+    id: "anlagen",
+    title: {
+      de: "Anlagen & Technik",
+      en: "Systems & equipment",
+    },
+    summary: {
+      de: "Photovoltaik, Wärmepumpe, Speicher, Wallbox: die Geräte hinter dem Zähler – und was sie für Vertrag, Zähler und Abrechnung bedeuten.",
+      en: "Solar, heat pumps, batteries, wallboxes: the machines behind the meter – and what they mean for contract, meter and billing.",
+    },
+    tone: "anlage",
+    icon: "sun",
+  },
+  {
     id: "tarife",
     title: { de: "Tarife & Preisbildung", en: "Tariffs & pricing" },
     summary: {

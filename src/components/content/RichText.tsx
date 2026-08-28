@@ -5,7 +5,7 @@ import { articleBySlug } from "@/content";
 import { t, type Locale } from "@/lib/i18n";
 
 const TOKEN =
-  /\[\[([^\]|]+?)(?:\|([^\]]+?))?\]\]|\[([^\]]+?)\]\((https?:\/\/[^)\s]+)\)|\*\*([^*]+?)\*\*|(?<!\*)\*([^*\n]+?)\*(?!\*)|`([^`]+?)`/g;
+  /\[\[([^\]|]+?)(?:\|([^\]]+?))?\]\]|\[([^\]]+?)\]\((https?:\/\/[^)\s]+)\)|\*\*(.+?)\*\*|(?<!\*)\*([^*\n]+?)\*(?!\*)|`([^`]+?)`/g;
 
 /**
  * Renders the wiki's small markup dialect. Unknown [[slugs]] render as plain
@@ -74,17 +74,23 @@ export function RichText({
       continue;
     }
 
+    // Emphasis nests: **fett mit [[link]]** has to keep working, so the inner
+    // run goes back through the same parser.
     if (bold !== undefined) {
       out.push(
         <strong key={key++} className="font-semibold text-fg">
-          {bold}
+          <RichText text={bold} locale={locale} />
         </strong>,
       );
       continue;
     }
 
     if (italic !== undefined) {
-      out.push(<em key={key++}>{italic}</em>);
+      out.push(
+        <em key={key++}>
+          <RichText text={italic} locale={locale} />
+        </em>,
+      );
       continue;
     }
 

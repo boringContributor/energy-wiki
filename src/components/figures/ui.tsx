@@ -17,7 +17,7 @@ export function FigureShell({
 }) {
   return (
     <div className="@container overflow-hidden rounded-2xl border border-border-base bg-surface">
-      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-border-base bg-surface-2 px-4 py-3 @md:px-5">
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-border-base bg-surface-2 px-5 py-3.5 @xl:px-6">
         <p className="text-sm font-medium text-fg">{title}</p>
         {hint && <p className="text-xs text-fg-subtle">{hint}</p>}
         {interactive && (
@@ -27,10 +27,10 @@ export function FigureShell({
           </span>
         )}
       </div>
-      <div className="p-4 @md:p-5">{children}</div>
+      <div className="p-5 @xl:p-6">{children}</div>
       {footer && (
-        <div className="border-t border-border-base bg-surface-2 px-4 py-3 text-xs leading-6 text-fg-subtle @md:px-5">
-          {footer}
+        <div className="border-t border-border-base bg-surface-2 px-5 py-4 @xl:px-6">
+          <p className="max-w-[68ch] text-xs leading-6 text-fg-subtle">{footer}</p>
         </div>
       )}
     </div>

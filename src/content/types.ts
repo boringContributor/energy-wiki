@@ -47,6 +47,7 @@ export type Block =
 export type CategoryId =
   | "grundlagen"
   | "sparten"
+  | "anlagen"
   | "tarife"
   | "messwesen"
   | "abrechnung"
@@ -78,6 +79,14 @@ export interface Category {
   title: Localized<string>;
   summary: Localized<string>;
   /** CSS custom-property stem, e.g. "strom" → var(--strom). */
-  tone: "markt" | "strom" | "gas" | "wasser" | "waerme" | "messung" | "recht";
+  tone:
+    | "markt"
+    | "strom"
+    | "gas"
+    | "wasser"
+    | "waerme"
+    | "messung"
+    | "recht"
+    | "anlage";
   icon: string;
 }
