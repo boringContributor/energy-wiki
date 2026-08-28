@@ -2,9 +2,9 @@
 
 import { useMemo, useState } from "react";
 
-import { euro, num } from "@/lib/utils";
+import { fmt } from "./i18n";
 
-import { FigureShell, Segmented, Slider } from "./ui";
+import { FigureShell, Segmented, Slider, L, tf, tr, type FigureProps } from "./ui";
 
 /* ------------------------------------------------------------------ *
  * Dynamischer Tarif
@@ -27,7 +27,8 @@ const FIX_TARIF = 32; // ct/kWh brutto im Festpreistarif
 const CHARGE_KWH = 11;
 const CHARGE_HOURS = 3;
 
-export function DynamischerTarifSimulator() {
+export function DynamischerTarifSimulator({ locale }: FigureProps) {
+  const { num, euro } = fmt(locale);
   const [start, setStart] = useState(12);
   const [laden, setLaden] = useState<"an" | "aus">("an");
 
@@ -52,14 +53,15 @@ export function DynamischerTarifSimulator() {
 
   return (
     <FigureShell
-      title="Ein Tag im dynamischen Tarif"
-      hint="Börsenpreis je Stunde + feste Bestandteile"
+      locale={locale}
+      title={tr(locale, "Ein Tag im dynamischen Tarif")}
+      hint={tr(locale, "Börsenpreis je Stunde + feste Bestandteile")}
       interactive
       footer="Der Arbeitspreis folgt dem Day-Ahead-Markt der Strombörse; Netzentgelte, Umlagen, Steuern und die Marge des Lieferanten bleiben konstant. Deshalb schwankt der Endpreis nie so stark wie die Börse selbst – und wird nur selten negativ."
     >
       <div className="grid gap-4 @md:grid-cols-2">
         <Slider
-          label="Ladestart Elektroauto"
+          label={tr(locale, "Ladestart Elektroauto")}
           value={start}
           onChange={setStart}
           min={0}
@@ -68,10 +70,10 @@ export function DynamischerTarifSimulator() {
           display={`${String(start).padStart(2, "0")}:00 – ${String((start + CHARGE_HOURS) % 24).padStart(2, "0")}:00`}
         />
         <Segmented
-          label="Ladevorgang"
+          label={tr(locale, "Ladevorgang")}
           options={[
             { value: "an", label: `11 kWh laden` },
-            { value: "aus", label: "nur Grundlast" },
+            { value: "aus", label: tr(locale, "nur Grundlast") },
           ]}
           value={laden}
           onChange={setLaden}
@@ -114,17 +116,17 @@ export function DynamischerTarifSimulator() {
           ))}
         </div>
         <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-2xs text-fg-subtle">
-          <LegendDot color="var(--accent)" label="Ladefenster" />
+          <LegendDot color="var(--accent)" label={tr(locale, "Ladefenster")} />
           <LegendDot
             color="var(--waerme)"
-            label={`teurer als der Festpreis (${FIX_TARIF} ct/kWh)`}
+            label={tf(locale, "teurer als der Festpreis ({0} ct/kWh)", FIX_TARIF)}
           />
-          <LegendDot color="var(--border-strong)" label="günstiger" />
+          <LegendDot color="var(--border-strong)" label={tr(locale, "günstiger")} />
         </div>
       </div>
 
       <div className="mt-6 grid gap-3 @md:grid-cols-3">
-        <Cell label="Dynamischer Tarif" value={euro(model.dyn)} accent />
+        <Cell label={tr(locale, "Dynamischer Tarif")} value={euro(model.dyn)} accent />
         <Cell label={`Festpreis ${FIX_TARIF} ct/kWh`} value={euro(model.fix)} />
         <Cell
           label={model.diff >= 0 ? "Ersparnis an diesem Tag" : "Mehrkosten"}
@@ -140,7 +142,8 @@ export function DynamischerTarifSimulator() {
  * SLP vs. RLM
  * ------------------------------------------------------------------ */
 
-export function LastprofilChart() {
+export function LastprofilChart({ locale }: FigureProps) {
+  const { num } = fmt(locale);
   const [mode, setMode] = useState<"slp" | "rlm">("slp");
 
   const slp = BASE_LOAD;
@@ -157,15 +160,16 @@ export function LastprofilChart() {
 
   return (
     <FigureShell
-      title="Standardlastprofil oder gemessener Lastgang?"
-      hint="Wie der Verbrauch über den Tag verteilt wird"
+      locale={locale}
+      title={tr(locale, "Standardlastprofil oder gemessener Lastgang?")}
+      hint={tr(locale, "Wie der Verbrauch über den Tag verteilt wird")}
       interactive
       footer="Bis 100.000 kWh im Jahr rechnet der Markt mit einem Standardlastprofil (SLP): Der Jahresverbrauch wird nach einer statistischen Kurve auf die Stunden verteilt. Darüber – und bei jedem Kunden mit Leistungsmessung – zählt der tatsächlich gemessene Lastgang (RLM) im Viertelstundentakt."
     >
       <Segmented
         options={[
-          { value: "slp", label: "SLP · Haushalt" },
-          { value: "rlm", label: "RLM · Betrieb" },
+          { value: "slp", label: tr(locale, "SLP · Haushalt") },
+          { value: "rlm", label: tr(locale, "RLM · Betrieb") },
         ]}
         value={mode}
         onChange={setMode}
@@ -210,12 +214,12 @@ export function LastprofilChart() {
 
       <div className="mt-4 grid gap-3 @md:grid-cols-3">
         <Cell
-          label="Tagesverbrauch"
+          label={tr(locale, "Tagesverbrauch")}
           value={`${num(data.reduce((a, b) => a + b, 0), 1)} kWh`}
         />
-        <Cell label="Spitzenlast" value={`${num(max, 1)} kW`} />
+        <Cell label={tr(locale, "Spitzenlast")} value={`${num(max, 1)} kW`} />
         <Cell
-          label="Messung"
+          label={tr(locale, "Messung")}
           value={mode === "slp" ? "1× im Jahr" : "alle 15 Minuten"}
         />
       </div>
@@ -238,16 +242,17 @@ const CO2_PATH = [
   { year: "2028", min: 60, max: 95, kind: "markt" },
 ] as const;
 
-export function Co2PreisPfad() {
+export function Co2PreisPfad({ locale }: FigureProps) {
   const max = 100;
   return (
     <FigureShell
-      title="Der CO₂-Preis auf Brennstoffe"
-      hint="Euro je Tonne CO₂, nationaler Emissionshandel (BEHG)"
+      locale={locale}
+      title={tr(locale, "Der CO₂-Preis auf Brennstoffe")}
+      hint={tr(locale, "Euro je Tonne CO₂, nationaler Emissionshandel (BEHG)")}
       footer="2021 bis 2025 galten feste Preise. 2026 und 2027 werden die Zertifikate versteigert – innerhalb eines Korridors von 55 bis 65 €/t. Ab 2028 löst der europäische Emissionshandel ETS 2 das nationale System ab, der Preis bildet sich dann frei am Markt; der Balken für 2028 zeigt eine Bandbreite gängiger Prognosen, keinen festgelegten Wert."
     >
       <div className="flex h-48 items-end gap-2 @md:gap-3">
-        {CO2_PATH.map((p) => {
+        {L(locale, CO2_PATH).map((p) => {
           const bottom = (p.min / max) * 100;
           const height = ((p.max - p.min) / max) * 100;
           return (
@@ -288,10 +293,10 @@ export function Co2PreisPfad() {
         })}
       </div>
       <p className="mt-4 text-xs text-fg-subtle">
-        Erdgas trägt rund 0,182 kg CO₂ je Kilowattstunde. Bei 65 €/t sind das{" "}
-        <span className="font-mono text-fg-muted">1,18 ct/kWh</span> netto – oder{" "}
-        <span className="font-mono text-fg-muted">1,41 ct/kWh</span> mit
-        Umsatzsteuer.
+        {tr(
+          locale,
+          "Erdgas trägt rund 0,182 kg CO₂ je Kilowattstunde. Bei 65 €/t sind das 1,18 ct/kWh netto – oder 1,41 ct/kWh mit Umsatzsteuer.",
+        )}
       </p>
     </FigureShell>
   );
@@ -310,14 +315,15 @@ const KWH_THINGS = [
   { icon: "🚿", label: "Warmwasser", value: "rund 25 Liter auf 40 °C" },
 ];
 
-export function KilowattstundeVergleich() {
+export function KilowattstundeVergleich({ locale }: FigureProps) {
   return (
     <FigureShell
-      title="Eine Kilowattstunde – wie viel ist das?"
-      hint="Anhaltspunkte, keine Messwerte"
+      locale={locale}
+      title={tr(locale, "Eine Kilowattstunde – wie viel ist das?")}
+      hint={tr(locale, "Anhaltspunkte, keine Messwerte")}
     >
       <ul className="grid gap-3 @md:grid-cols-2 @2xl:grid-cols-3">
-        {KWH_THINGS.map((thing) => (
+        {L(locale, KWH_THINGS).map((thing) => (
           <li
             key={thing.label}
             className="flex items-center gap-3 rounded-xl border border-border-base bg-surface-2 p-3"
@@ -335,8 +341,10 @@ export function KilowattstundeVergleich() {
         ))}
       </ul>
       <p className="mt-4 text-xs leading-6 text-fg-subtle">
-        Ein Vier-Personen-Haushalt verbraucht rund 4.000 kWh Strom im Jahr, eine
-        Gasheizung im Einfamilienhaus 15.000 bis 25.000 kWh Wärme.
+        {tr(
+          locale,
+          "Ein Vier-Personen-Haushalt verbraucht rund 4.000 kWh Strom im Jahr, eine Gasheizung im Einfamilienhaus 15.000 bis 25.000 kWh Wärme.",
+        )}
       </p>
     </FigureShell>
   );

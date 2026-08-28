@@ -215,9 +215,11 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         <SectionHeading
           eyebrow={s("topics", l)}
           title={
+            /* Spelled out from the actual count — the headline used to say
+               "seven" while eight categories were rendered below it. */
             l === "de"
-              ? "Sieben Themen, ein Marktbild"
-              : "Seven topics, one picture of the market"
+              ? `${numeral(categories.length, "de")} Themen, ein Marktbild`
+              : `${numeral(categories.length, "en")} topics, one picture of the market`
           }
         />
         <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -329,4 +331,11 @@ function HeroFallback() {
       />
     </svg>
   );
+}
+
+/** Small numbers spelled out, so a headline can name a count without drifting. */
+function numeral(n: number, locale: Locale): string {
+  const de = ["null", "Ein", "Zwei", "Drei", "Vier", "Fünf", "Sechs", "Sieben", "Acht", "Neun", "Zehn"];
+  const en = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"];
+  return (locale === "de" ? de : en)[n] ?? String(n);
 }

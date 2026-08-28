@@ -9,33 +9,48 @@ import type { CategoryId } from "@/content/types";
 export const HERO_ANIMATIONS = [
   {
     name: "hero-prosumer",
-    title: "Prosumer",
-    note: "Sonne, Wind, PV-Dach, Speicher: die ganze Geschichte des Wikis in einem Bild.",
-    usedFor: "Startseite",
+    title: { de: "Prosumer", en: "Prosumer" },
+    note: {
+      de: "Sonne, Wind, PV-Dach, Speicher: die ganze Geschichte des Wikis in einem Bild.",
+      en: "Sun, wind, a PV roof, a battery: the whole story of this wiki in one picture.",
+    },
+    usedFor: { de: "Startseite", en: "Home page" },
   },
   {
     name: "hero-netzpuls",
-    title: "Netzpuls",
-    note: "Energie läuft von der Erzeugung über zwei Umspannpunkte zu drei Abnahmestellen. Die Endknoten tragen ein Symbol statt nur ein Kreis zu sein.",
-    usedFor: "Thema „Markt & Grundlagen“",
+    title: { de: "Netzpuls", en: "Grid pulse" },
+    note: {
+      de: "Energie läuft von der Erzeugung über zwei Umspannpunkte zu drei Abnahmestellen. Die Endknoten tragen ein Symbol statt nur ein Kreis zu sein.",
+      en: "Energy runs from generation through two transformer points to three offtake points. The end nodes carry a symbol rather than being plain circles.",
+    },
+    usedFor: { de: "Thema „Markt & Grundlagen“", en: "Topic “Market & fundamentals”" },
   },
   {
     name: "hero-tarifkurve",
-    title: "Tarifkurve",
-    note: "Ein Börsentag als Balkenfeld. Ein durchgehender Verlauf codiert die Höhe, ein Playhead wandert über den Tag.",
-    usedFor: "Thema „Tarife & Preisbildung“",
+    title: { de: "Tarifkurve", en: "Tariff curve" },
+    note: {
+      de: "Ein Börsentag als Balkenfeld. Ein durchgehender Verlauf codiert die Höhe, ein Playhead wandert über den Tag.",
+      en: "A day on the exchange as a field of bars. A continuous gradient encodes the level, a playhead travels across the day.",
+    },
+    usedFor: { de: "Thema „Tarife & Preisbildung“", en: "Topic “Tariffs & pricing”" },
   },
   {
     name: "hero-zaehler",
-    title: "Zähler",
-    note: "Ein Instrument, das erwacht: Zeiger und Gradientenbogen laufen synchron, Skalenstriche wandern mit, Ringe strahlen nach außen ab.",
-    usedFor: "Thema „Zähler & Messwesen“",
+    title: { de: "Zähler", en: "Meter" },
+    note: {
+      de: "Ein Instrument, das erwacht: Zeiger und Gradientenbogen laufen synchron, Skalenstriche wandern mit, Ringe strahlen nach außen ab.",
+      en: "An instrument waking up: the needle and the gradient arc move in sync, the scale ticks travel with them, rings radiate outwards.",
+    },
+    usedFor: { de: "Thema „Zähler & Messwesen“", en: "Topic “Meters & metering”" },
   },
   {
     name: "energy-flow",
-    title: "Leitung",
-    note: "Die ruhige erste Fassung: Mast, Zähler, Haus, ein Puls auf der Leitung.",
-    usedFor: "Thema „Sparten“",
+    title: { de: "Leitung", en: "Power line" },
+    note: {
+      de: "Die ruhige erste Fassung: Mast, Zähler, Haus, ein Puls auf der Leitung.",
+      en: "The calm first draft: a pylon, a meter, a house, one pulse travelling down the line.",
+    },
+    usedFor: { de: "Thema „Sparten“", en: "Topic “Commodities”" },
   },
 ] as const;
 

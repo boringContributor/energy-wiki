@@ -73,14 +73,14 @@ export const figures = {
 
 export type FigureId = keyof typeof figures;
 
-export function Figure({ id }: { id: string; locale?: Locale }) {
+export function Figure({ id, locale = "de" }: { id: string; locale?: Locale }) {
   const Component = figures[id as FigureId];
   if (!Component) {
     return (
       <div className="rounded-xl border border-dashed border-border-strong p-6 text-center text-sm text-fg-subtle">
-        Grafik „{id}“ fehlt noch.
+        {locale === "en" ? `Figure “${id}” is missing.` : `Grafik „${id}“ fehlt noch.`}
       </div>
     );
   }
-  return <Component />;
+  return <Component locale={locale} />;
 }

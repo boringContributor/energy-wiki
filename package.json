@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "check:content": "node scripts/check-content.mjs",
-    "check": "node scripts/check-content.mjs && eslint && next build"
+    "check:translations": "node scripts/check-translations.mjs",
+    "scan:en": "node scripts/scan-en.mjs",
+    "check": "node scripts/check-content.mjs && node scripts/check-translations.mjs && eslint && next build"
   },
   "dependencies": {
     "lottie-react": "^3.1.1",

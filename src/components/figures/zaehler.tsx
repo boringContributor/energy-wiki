@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { cn } from "@/lib/utils";
 
-import { FigureShell } from "./ui";
+import { FigureShell, L, tr, type FigureProps } from "./ui";
 
 interface MeterType {
   id: string;
@@ -140,20 +140,21 @@ const METERS: MeterType[] = [
   },
 ];
 
-export function ZaehlerTypen() {
+export function ZaehlerTypen({ locale }: FigureProps) {
   const [activeId, setActiveId] = useState(METERS[2].id);
-  const active = METERS.find((m) => m.id === activeId)!;
+  const active = L(locale, METERS.find((m) => m.id === activeId)!);
 
   return (
     <FigureShell
-      title="Zählertypen im Überblick"
-      hint="Auswählen und vergleichen"
+      locale={locale}
+      title={tr(locale, "Zählertypen im Überblick")}
+      hint={tr(locale, "Auswählen und vergleichen")}
       interactive
       footer="Nicht jeder digitale Zähler ist ein Smart Meter: Erst mit Smart-Meter-Gateway wird aus einer modernen Messeinrichtung ein intelligentes Messsystem. Die Preisobergrenzen stehen im Messstellenbetriebsgesetz und wurden mit der Novelle 2025 angepasst."
     >
       <div className="grid gap-4 @2xl:grid-cols-[minmax(0,15rem)_1fr]">
         <ul className="flex gap-2 overflow-x-auto pb-1 @2xl:flex-col @2xl:overflow-visible @2xl:pb-0">
-          {METERS.map((m) => (
+          {L(locale, METERS).map((m) => (
             <li key={m.id} className="shrink-0 @2xl:shrink">
               <button
                 type="button"
@@ -312,15 +313,16 @@ const ESTIMATE_REASONS = [
   { n: "3", text: "Verbrauchszuordnung wegen unterjähriger Preisänderung" },
 ];
 
-export function Zaehlerstandsarten() {
+export function Zaehlerstandsarten({ locale }: FigureProps) {
   return (
     <FigureShell
-      title="Woher der Zählerstand kommt"
-      hint="Und warum das auf der Rechnung steht"
+      locale={locale}
+      title={tr(locale, "Woher der Zählerstand kommt")}
+      hint={tr(locale, "Und warum das auf der Rechnung steht")}
       footer="§ 40 Abs. 2 EnWG verlangt, dass jeder Zählerstand gekennzeichnet ist. Eine Schätzung ist zulässig, aber begründungspflichtig – und sie ist der häufigste Auslöser für Rückfragen im Kundenservice."
     >
       <ul className="grid gap-3 @md:grid-cols-3">
-        {READING_KINDS.map((k) => (
+        {L(locale, READING_KINDS).map((k) => (
           <li
             key={k.code}
             className="rounded-xl border border-border-base bg-surface-2 p-4"
@@ -342,10 +344,10 @@ export function Zaehlerstandsarten() {
 
       <div className="mt-4 rounded-xl border border-border-base p-4">
         <p className="text-xs font-semibold uppercase tracking-[0.08em] text-fg-subtle">
-          Schlüssel für den Grund einer Schätzung
+          {tr(locale, "Schlüssel für den Grund einer Schätzung")}
         </p>
         <ul className="mt-3 space-y-2">
-          {ESTIMATE_REASONS.map((r) => (
+          {L(locale, ESTIMATE_REASONS).map((r) => (
             <li key={r.n} className="flex items-baseline gap-3 text-sm">
               <span className="flex size-5 shrink-0 items-center justify-center rounded bg-surface-2 font-mono text-2xs font-semibold text-fg-muted">
                 {r.n}

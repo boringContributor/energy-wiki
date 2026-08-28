@@ -2,9 +2,9 @@
 
 import { useMemo, useState } from "react";
 
-import { euro, num } from "@/lib/utils";
+import { fmt } from "./i18n";
 
-import { FigureShell, Legend, ResultRow, Segmented, Slider, StackBar } from "./ui";
+import { FigureShell, Legend, ResultRow, Segmented, Slider, StackBar, L, tf, tr, type FigureProps } from "./ui";
 
 /* ------------------------------------------------------------------ *
  * Shared assumptions
@@ -48,18 +48,19 @@ const C = {
   abwasser: "var(--gas)",
 };
 
-const ct = (v: number) => num(v, 2);
 
 /* ------------------------------------------------------------------ *
  * Strompreis
  * ------------------------------------------------------------------ */
 
-export function StrompreisStack() {
+export function StrompreisStack({ locale }: FigureProps) {
+  const { num, euro } = fmt(locale);
   const [kwh, setKwh] = useState(3500);
   const [gemeinde, setGemeinde] = useState<Gemeinde>("100");
   const [active, setActive] = useState<string | null>(null);
 
   const model = useMemo(() => {
+    const { euro } = fmt(locale);
     const grundpreis = 120; // €/a Vertrieb
     const messung = 20; // €/a grundzuständiger Messstellenbetrieb, mME
     const fix = ((grundpreis + messung) * 100) / kwh;
@@ -67,39 +68,39 @@ export function StrompreisStack() {
     const parts = [
       {
         key: "fix",
-        label: "Grundpreis & Messstellenbetrieb",
+        label: tr(locale, "Grundpreis & Messstellenbetrieb"),
         value: fix,
         color: C.fix,
-        note: `${euro(grundpreis + messung, 0)}/Jahr fix`,
+        note: tf(locale, "{0}/Jahr fix", euro(grundpreis + messung, 0)),
       },
       {
         key: "beschaffung",
-        label: "Beschaffung & Vertrieb",
+        label: tr(locale, "Beschaffung & Vertrieb"),
         value: 11.8,
         color: C.beschaffung,
       },
-      { key: "netz", label: "Netzentgelt (Arbeitsanteil)", value: 8.8, color: C.netz },
-      { key: "kwkg", label: "KWKG-Umlage", value: 0.446, color: C.umlagen },
+      { key: "netz", label: tr(locale, "Netzentgelt (Arbeitsanteil)"), value: 8.8, color: C.netz },
+      { key: "kwkg", label: tr(locale, "KWKG-Umlage"), value: 0.446, color: C.umlagen },
       {
         key: "offshore",
-        label: "Offshore-Netzumlage",
+        label: tr(locale, "Offshore-Netzumlage"),
         value: 0.941,
         color: C.umlagen,
       },
       {
         key: "bnn",
-        label: "Aufschlag besondere Netznutzung",
+        label: tr(locale, "Aufschlag besondere Netznutzung"),
         value: 1.559,
         color: C.umlagen,
-        note: "früher § 19 StromNEV",
+        note: tr(locale, "früher § 19 StromNEV"),
       },
       {
         key: "konzession",
-        label: "Konzessionsabgabe",
+        label: tr(locale, "Konzessionsabgabe"),
         value: KONZESSION_STROM[gemeinde],
         color: C.konzession,
       },
-      { key: "stromsteuer", label: "Stromsteuer", value: 2.05, color: C.steuer },
+      { key: "stromsteuer", label: tr(locale, "Stromsteuer"), value: 2.05, color: C.steuer },
     ];
 
     const netto = parts.reduce((s, p) => s + p.value, 0);
@@ -107,23 +108,24 @@ export function StrompreisStack() {
     return {
       parts: [
         ...parts,
-        { key: "mwst", label: "Umsatzsteuer 19 %", value: mwst, color: C.mwst },
+        { key: "mwst", label: tr(locale, "Umsatzsteuer 19 %"), value: mwst, color: C.mwst },
       ],
       netto,
       brutto: netto + mwst,
     };
-  }, [kwh, gemeinde]);
+  }, [kwh, gemeinde, locale]);
 
   return (
     <FigureShell
-      title="Strompreis zerlegt"
-      hint="Haushalt, ct/kWh brutto"
+      locale={locale}
+      title={tr(locale, "Strompreis zerlegt")}
+      hint={tr(locale, "Haushalt, ct/kWh brutto")}
       interactive
       footer="Modellwerte für 2026. Regulierte Bestandteile (Umlagen, Stromsteuer, Konzessionsabgabe) sind die veröffentlichten Sätze; Beschaffung, Vertrieb und Netzentgelt sind realistische Durchschnitte und je Anbieter und Netzgebiet verschieden."
     >
       <div className="grid gap-4 @md:grid-cols-2">
         <Slider
-          label="Jahresverbrauch"
+          label={tr(locale, "Jahresverbrauch")}
           value={kwh}
           onChange={setKwh}
           min={800}
@@ -132,7 +134,7 @@ export function StrompreisStack() {
           display={`${num(kwh)} kWh`}
         />
         <Segmented
-          label="Gemeindegröße (Konzessionsabgabe)"
+          label={tr(locale, "Gemeindegröße (Konzessionsabgabe)")}
           options={GEMEINDE_OPTIONS}
           value={gemeinde}
           onChange={setGemeinde}
@@ -152,15 +154,15 @@ export function StrompreisStack() {
           unit="ct/kWh"
           activeKey={active}
           onHover={setActive}
-          format={ct}
+          format={(v) => num(v, 2)}
         />
       </div>
 
       <div className="mt-4 grid gap-3 @md:grid-cols-3">
-        <Metric label="Netto" value={`${ct(model.netto)} ct/kWh`} />
-        <Metric label="Brutto" value={`${ct(model.brutto)} ct/kWh`} accent />
+        <Metric label={tr(locale, "Netto")} value={`${num(model.netto, 2)} ct/kWh`} />
+        <Metric label={tr(locale, "Brutto")} value={`${num(model.brutto, 2)} ct/kWh`} accent />
         <Metric
-          label="Jahreskosten"
+          label={tr(locale, "Jahreskosten")}
           value={euro((model.brutto * kwh) / 100, 0)}
         />
       </div>
@@ -172,13 +174,15 @@ export function StrompreisStack() {
  * Gaspreis
  * ------------------------------------------------------------------ */
 
-export function GaspreisStack() {
+export function GaspreisStack({ locale }: FigureProps) {
+  const { num, euro } = fmt(locale);
   const [kwh, setKwh] = useState(15000);
   const [co2, setCo2] = useState(65);
   const [gemeinde, setGemeinde] = useState<Gemeinde>("100");
   const [active, setActive] = useState<string | null>(null);
 
   const model = useMemo(() => {
+    const { euro } = fmt(locale);
     const grundpreis = 150;
     const messung = 15;
     const fix = ((grundpreis + messung) * 100) / kwh;
@@ -188,31 +192,31 @@ export function GaspreisStack() {
     const parts = [
       {
         key: "fix",
-        label: "Grundpreis & Messstellenbetrieb",
+        label: tr(locale, "Grundpreis & Messstellenbetrieb"),
         value: fix,
         color: C.fix,
-        note: `${euro(grundpreis + messung, 0)}/Jahr fix`,
+        note: tf(locale, "{0}/Jahr fix", euro(grundpreis + messung, 0)),
       },
-      { key: "beschaffung", label: "Beschaffung & Vertrieb", value: 4.2, color: C.beschaffung },
-      { key: "netz", label: "Netzentgelt (Arbeitsanteil)", value: 1.9, color: C.netz },
+      { key: "beschaffung", label: tr(locale, "Beschaffung & Vertrieb"), value: 4.2, color: C.beschaffung },
+      { key: "netz", label: tr(locale, "Netzentgelt (Arbeitsanteil)"), value: 1.9, color: C.netz },
       {
         key: "bilanz",
-        label: "Bilanzierungsumlage (SLP)",
+        label: tr(locale, "Bilanzierungsumlage (SLP)"),
         value: 0.06,
         color: C.umlagen,
-        note: "jährlich neu festgelegt",
+        note: tr(locale, "jährlich neu festgelegt"),
       },
       {
         key: "co2",
-        label: "CO₂-Preis (BEHG)",
+        label: tr(locale, "CO₂-Preis (BEHG)"),
         value: co2Ct,
         color: C.steuer,
-        note: `${co2} €/t × 0,182 kg/kWh`,
+        note: tf(locale, "{0} €/t × 0,182 kg/kWh", co2),
       },
-      { key: "energiesteuer", label: "Energiesteuer (Erdgassteuer)", value: 0.55, color: C.steuer },
+      { key: "energiesteuer", label: tr(locale, "Energiesteuer (Erdgassteuer)"), value: 0.55, color: C.steuer },
       {
         key: "konzession",
-        label: "Konzessionsabgabe (Heizgas)",
+        label: tr(locale, "Konzessionsabgabe (Heizgas)"),
         value: KONZESSION_GAS_HEIZ[gemeinde],
         color: C.konzession,
       },
@@ -223,23 +227,24 @@ export function GaspreisStack() {
     return {
       parts: [
         ...parts,
-        { key: "mwst", label: "Umsatzsteuer 19 %", value: mwst, color: C.mwst },
+        { key: "mwst", label: tr(locale, "Umsatzsteuer 19 %"), value: mwst, color: C.mwst },
       ],
       netto,
       brutto: netto + mwst,
     };
-  }, [kwh, co2, gemeinde]);
+  }, [kwh, co2, gemeinde, locale]);
 
   return (
     <FigureShell
-      title="Gaspreis zerlegt"
-      hint="Haushalt mit Gasheizung, ct/kWh brutto"
+      locale={locale}
+      title={tr(locale, "Gaspreis zerlegt")}
+      hint={tr(locale, "Haushalt mit Gasheizung, ct/kWh brutto")}
       interactive
       footer="Die Gasspeicherumlage entfällt seit dem 1. Januar 2026 – der Bund trägt diese Kosten. Der CO₂-Preis bewegt sich 2026 in einem Korridor von 55 bis 65 €/t; ab 2028 bildet ihn der europäische Emissionshandel ETS 2 frei am Markt."
     >
       <div className="grid gap-4 @md:grid-cols-2">
         <Slider
-          label="Jahresverbrauch"
+          label={tr(locale, "Jahresverbrauch")}
           value={kwh}
           onChange={setKwh}
           min={2000}
@@ -248,7 +253,7 @@ export function GaspreisStack() {
           display={`${num(kwh)} kWh`}
         />
         <Slider
-          label="CO₂-Preis 2026"
+          label={tr(locale, "CO₂-Preis 2026")}
           value={co2}
           onChange={setCo2}
           min={55}
@@ -259,7 +264,7 @@ export function GaspreisStack() {
       </div>
       <div className="mt-4">
         <Segmented
-          label="Gemeindegröße (Konzessionsabgabe)"
+          label={tr(locale, "Gemeindegröße (Konzessionsabgabe)")}
           options={GEMEINDE_OPTIONS}
           value={gemeinde}
           onChange={setGemeinde}
@@ -279,15 +284,15 @@ export function GaspreisStack() {
           unit="ct/kWh"
           activeKey={active}
           onHover={setActive}
-          format={ct}
+          format={(v) => num(v, 2)}
         />
       </div>
 
       <div className="mt-4 grid gap-3 @md:grid-cols-3">
-        <Metric label="Netto" value={`${ct(model.netto)} ct/kWh`} />
-        <Metric label="Brutto" value={`${ct(model.brutto)} ct/kWh`} accent />
+        <Metric label={tr(locale, "Netto")} value={`${num(model.netto, 2)} ct/kWh`} />
+        <Metric label={tr(locale, "Brutto")} value={`${num(model.brutto, 2)} ct/kWh`} accent />
         <Metric
-          label="Jahreskosten"
+          label={tr(locale, "Jahreskosten")}
           value={euro((model.brutto * kwh) / 100, 0)}
         />
       </div>
@@ -299,12 +304,14 @@ export function GaspreisStack() {
  * Wasserpreis
  * ------------------------------------------------------------------ */
 
-export function WasserpreisStack() {
+export function WasserpreisStack({ locale }: FigureProps) {
+  const { num, euro } = fmt(locale);
   const [m3, setM3] = useState(120);
   const [flaeche, setFlaeche] = useState(80);
   const [active, setActive] = useState<string | null>(null);
 
   const model = useMemo(() => {
+    const { num } = fmt(locale);
     const grundpreis = 90; // €/a, abhängig von der Zählergröße
     const trink = 2.0 * m3;
     const trinkBrutto = (grundpreis + trink) * 1.07; // 7 % ermäßigter Satz
@@ -314,54 +321,55 @@ export function WasserpreisStack() {
     const parts = [
       {
         key: "grund",
-        label: "Grundpreis Trinkwasser",
+        label: tr(locale, "Grundpreis Trinkwasser"),
         value: grundpreis,
         color: C.fix,
-        note: "nach Zählergröße",
+        note: tr(locale, "nach Zählergröße"),
       },
       {
         key: "trink",
-        label: "Mengenpreis Trinkwasser",
+        label: tr(locale, "Mengenpreis Trinkwasser"),
         value: trink,
         color: C.wasser,
-        note: `${num(m3)} m³ × 2,00 €`,
+        note: tf(locale, "{0} m³ × 2,00 €", num(m3)),
       },
       {
         key: "mwst",
-        label: "Umsatzsteuer 7 % (nur Trinkwasser)",
+        label: tr(locale, "Umsatzsteuer 7 % (nur Trinkwasser)"),
         value: (grundpreis + trink) * 0.07,
         color: C.mwst,
       },
       {
         key: "schmutz",
-        label: "Schmutzwassergebühr",
+        label: tr(locale, "Schmutzwassergebühr"),
         value: schmutz,
         color: C.abwasser,
-        note: "Gebühr, keine USt",
+        note: tr(locale, "Gebühr, keine USt"),
       },
       {
         key: "nieder",
-        label: "Niederschlagswassergebühr",
+        label: tr(locale, "Niederschlagswassergebühr"),
         value: nieder,
         color: C.umlagen,
-        note: `${flaeche} m² versiegelt`,
+        note: tf(locale, "{0} m² versiegelt", flaeche),
       },
     ];
 
     const total = parts.reduce((s, p) => s + p.value, 0);
     return { parts, total, trinkBrutto, abwasser: schmutz + nieder };
-  }, [m3, flaeche]);
+  }, [m3, flaeche, locale]);
 
   return (
     <FigureShell
-      title="Wasserkosten zerlegt"
-      hint="Ein Haushalt, ein Jahr"
+      locale={locale}
+      title={tr(locale, "Wasserkosten zerlegt")}
+      hint={tr(locale, "Ein Haushalt, ein Jahr")}
       interactive
       footer="Wasser ist die einzige Sparte ohne bundesweiten Markt: Preise und Gebühren setzt der örtliche Versorger bzw. die Kommune. Trinkwasser ist eine Lieferung mit 7 % Umsatzsteuer, Abwasser dagegen meist eine hoheitliche Gebühr ganz ohne Umsatzsteuer."
     >
       <div className="grid gap-4 @md:grid-cols-2">
         <Slider
-          label="Trinkwasserverbrauch"
+          label={tr(locale, "Trinkwasserverbrauch")}
           value={m3}
           onChange={setM3}
           min={20}
@@ -370,7 +378,7 @@ export function WasserpreisStack() {
           display={`${num(m3)} m³`}
         />
         <Slider
-          label="Versiegelte Fläche"
+          label={tr(locale, "Versiegelte Fläche")}
           value={flaeche}
           onChange={setFlaeche}
           min={0}
@@ -398,13 +406,17 @@ export function WasserpreisStack() {
       </div>
 
       <div className="mt-4 grid gap-3 @md:grid-cols-3">
-        <Metric label="Trinkwasser brutto" value={euro(model.trinkBrutto, 0)} />
-        <Metric label="Abwasser" value={euro(model.abwasser, 0)} />
-        <Metric label="Gesamt pro Jahr" value={euro(model.total, 0)} accent />
+        <Metric label={tr(locale, "Trinkwasser brutto")} value={euro(model.trinkBrutto, 0)} />
+        <Metric label={tr(locale, "Abwasser")} value={euro(model.abwasser, 0)} />
+        <Metric label={tr(locale, "Gesamt pro Jahr")} value={euro(model.total, 0)} accent />
       </div>
       <p className="mt-3 text-xs text-fg-subtle">
-        Entspricht {euro(model.total / m3, 2)} je m³ – oder{" "}
-        {num((model.total / m3 / 1000) * 100, 2)} Cent je Liter.
+        {tf(
+          locale,
+          "Entspricht {0} je m³ – oder {1} Cent je Liter.",
+          euro(model.total / m3, 2),
+          num((model.total / m3 / 1000) * 100, 2),
+        )}
       </p>
     </FigureShell>
   );
@@ -414,7 +426,8 @@ export function WasserpreisStack() {
  * m³ → kWh
  * ------------------------------------------------------------------ */
 
-export function GasUmrechner() {
+export function GasUmrechner({ locale }: FigureProps) {
+  const { num, euro } = fmt(locale);
   const [m3, setM3] = useState(1500);
   const [brennwert, setBrennwert] = useState(11.2);
   const [zustand, setZustand] = useState(0.95);
@@ -424,14 +437,15 @@ export function GasUmrechner() {
 
   return (
     <FigureShell
-      title="Gaszähler in Kilowattstunden umrechnen"
-      hint="Der Zähler misst Volumen, die Rechnung zählt Energie"
+      locale={locale}
+      title={tr(locale, "Gaszähler in Kilowattstunden umrechnen")}
+      hint={tr(locale, "Der Zähler misst Volumen, die Rechnung zählt Energie")}
       interactive
       footer="Brennwert und Zustandszahl stehen auf jeder Gasrechnung und kommen vom Netzbetreiber. Der Brennwert schwankt mit der Gasqualität (L-Gas rund 8,4–11,2 kWh/m³, H-Gas rund 10–13,1 kWh/m³), die Zustandszahl mit Höhenlage und Anschlussdruck – typisch 0,90 bis 0,98."
     >
       <div className="grid gap-4 @md:grid-cols-2">
         <Slider
-          label="Gemessenes Volumen"
+          label={tr(locale, "Gemessenes Volumen")}
           value={m3}
           onChange={setM3}
           min={50}
@@ -440,7 +454,7 @@ export function GasUmrechner() {
           display={`${num(m3)} m³`}
         />
         <Slider
-          label="Brennwert"
+          label={tr(locale, "Brennwert")}
           value={brennwert}
           onChange={setBrennwert}
           min={8.4}
@@ -449,7 +463,7 @@ export function GasUmrechner() {
           display={`${num(brennwert, 1)} kWh/m³`}
         />
         <Slider
-          label="Zustandszahl (z-Zahl)"
+          label={tr(locale, "Zustandszahl (z-Zahl)")}
           value={zustand}
           onChange={setZustand}
           min={0.85}
@@ -458,7 +472,7 @@ export function GasUmrechner() {
           display={num(zustand, 2)}
         />
         <Slider
-          label="Arbeitspreis"
+          label={tr(locale, "Arbeitspreis")}
           value={preis}
           onChange={setPreis}
           min={5}
@@ -470,19 +484,19 @@ export function GasUmrechner() {
 
       <div className="mt-6 overflow-x-auto">
         <div className="flex min-w-max items-center gap-3 font-mono text-sm">
-          <Chip value={`${num(m3)} m³`} label="Volumen" tone="var(--wasser)" />
+          <Chip value={`${num(m3)} m³`} label={tr(locale, "Volumen")} tone="var(--wasser)" />
           <span className="text-fg-subtle">×</span>
           <Chip value={num(zustand, 2)} label="z-Zahl" tone="var(--markt)" />
           <span className="text-fg-subtle">×</span>
           <Chip
             value={`${num(brennwert, 1)}`}
-            label="Brennwert"
+            label={tr(locale, "Brennwert")}
             tone="var(--waerme)"
           />
           <span className="text-fg-subtle">=</span>
           <Chip
             value={`${num(kwh, 0)} kWh`}
-            label="Abrechnungswert"
+            label={tr(locale, "Abrechnungswert")}
             tone="var(--accent)"
             strong
           />
@@ -490,9 +504,9 @@ export function GasUmrechner() {
       </div>
 
       <ResultRow
-        label="Energiekosten (nur Arbeitspreis)"
+        label={tr(locale, "Energiekosten (nur Arbeitspreis)")}
         value={euro((kwh * preis) / 100)}
-        hint={`1 m³ entspricht hier ${num(zustand * brennwert, 2)} kWh.`}
+        hint={tf(locale, "1 m³ entspricht hier {0} kWh.", num(zustand * brennwert, 2))}
       />
     </FigureShell>
   );
@@ -502,7 +516,8 @@ export function GasUmrechner() {
  * Abschlag
  * ------------------------------------------------------------------ */
 
-export function AbschlagRechner() {
+export function AbschlagRechner({ locale }: FigureProps) {
+  const { num, euro } = fmt(locale);
   const [kwh, setKwh] = useState(3500);
   const [arbeitspreis, setArbeitspreis] = useState(35);
   const [grundpreis, setGrundpreis] = useState(140);
@@ -517,14 +532,15 @@ export function AbschlagRechner() {
 
   return (
     <FigureShell
-      title="Abschlag und Jahresabrechnung"
-      hint="Prognose, Raten, Saldo"
+      locale={locale}
+      title={tr(locale, "Abschlag und Jahresabrechnung")}
+      hint={tr(locale, "Prognose, Raten, Saldo")}
       interactive
       footer="§ 13 StromGVV und § 13 GasGVV: Der Abschlag bemisst sich anteilig am Verbrauch des zuletzt abgerechneten Zeitraums. Macht der Kunde glaubhaft, dass sein Verbrauch erheblich geringer ausfällt, ist das angemessen zu berücksichtigen."
     >
       <div className="grid gap-4 @md:grid-cols-2">
         <Slider
-          label="Prognose: Verbrauch Vorjahr"
+          label={tr(locale, "Prognose: Verbrauch Vorjahr")}
           value={kwh}
           onChange={setKwh}
           min={800}
@@ -533,7 +549,7 @@ export function AbschlagRechner() {
           display={`${num(kwh)} kWh`}
         />
         <Slider
-          label="Arbeitspreis (brutto)"
+          label={tr(locale, "Arbeitspreis (brutto)")}
           value={arbeitspreis}
           onChange={setArbeitspreis}
           min={15}
@@ -542,7 +558,7 @@ export function AbschlagRechner() {
           display={`${num(arbeitspreis, 1)} ct/kWh`}
         />
         <Slider
-          label="Grundpreis je Jahr (brutto)"
+          label={tr(locale, "Grundpreis je Jahr (brutto)")}
           value={grundpreis}
           onChange={setGrundpreis}
           min={0}
@@ -551,7 +567,7 @@ export function AbschlagRechner() {
           display={euro(grundpreis, 0)}
         />
         <Segmented
-          label="Zahl der Abschläge im Jahr"
+          label={tr(locale, "Zahl der Abschläge im Jahr")}
           options={[
             { value: "11", label: "11 Raten" },
             { value: "12", label: "12 Raten" },
@@ -563,18 +579,18 @@ export function AbschlagRechner() {
       </div>
 
       <ResultRow
-        label="Monatlicher Abschlag"
+        label={tr(locale, "Monatlicher Abschlag")}
         value={euro(abschlag)}
-        hint={`${euro(jahreskosten, 0)} erwartete Jahreskosten ÷ ${raten} Raten`}
+        hint={tf(locale, "{0} erwartete Jahreskosten ÷ {1} Raten", euro(jahreskosten, 0), raten)}
       />
 
       <div className="mt-6 border-t border-border-base pt-5">
         <p className="text-xs font-semibold uppercase tracking-[0.08em] text-fg-subtle">
-          Und was steht am Jahresende auf der Rechnung?
+          {tr(locale, "Und was steht am Jahresende auf der Rechnung?")}
         </p>
         <div className="mt-3">
           <Slider
-            label="Tatsächlicher Verbrauch im Abrechnungsjahr"
+            label={tr(locale, "Tatsächlicher Verbrauch im Abrechnungsjahr")}
             value={neuerVerbrauch}
             onChange={setNeuerVerbrauch}
             min={800}
@@ -585,7 +601,7 @@ export function AbschlagRechner() {
         </div>
 
         <dl className="mt-4 divide-y divide-border-base border-y border-border-base text-sm">
-          <Row label="Tatsächliche Jahreskosten" value={euro(istKosten)} />
+          <Row label={tr(locale, "Tatsächliche Jahreskosten")} value={euro(istKosten)} />
           <Row
             label={`Geleistete Abschläge (${raten} × ${euro(abschlag)})`}
             value={`− ${euro(gezahlt)}`}
@@ -624,13 +640,14 @@ export function AbschlagRechner() {
  * Grundpreis vs. Arbeitspreis
  * ------------------------------------------------------------------ */
 
-export function TarifAnatomie() {
+export function TarifAnatomie({ locale }: FigureProps) {
+  const { num, euro } = fmt(locale);
   const [kwh, setKwh] = useState(2500);
-  const tarife = [
+  const tarife = L(locale, [
     { name: "Tarif A · hoher Grundpreis", gp: 240, ap: 28, color: "var(--gas)" },
     { name: "Tarif B · ausgewogen", gp: 140, ap: 32, color: "var(--accent)" },
     { name: "Tarif C · ohne Grundpreis", gp: 0, ap: 38.5, color: "var(--strom)" },
-  ];
+  ]);
 
   const results = tarife
     .map((t) => ({
@@ -643,13 +660,14 @@ export function TarifAnatomie() {
 
   return (
     <FigureShell
-      title="Warum der günstigste Tarif vom Verbrauch abhängt"
-      hint="Grundpreis gegen Arbeitspreis"
+      locale={locale}
+      title={tr(locale, "Warum der günstigste Tarif vom Verbrauch abhängt")}
+      hint={tr(locale, "Grundpreis gegen Arbeitspreis")}
       interactive
       footer="Der Grundpreis deckt verbrauchsunabhängige Kosten – Messstellenbetrieb, Abrechnung, Kundenservice, Teile des Netzentgelts. Je kleiner der Verbrauch, desto stärker schlägt er auf den effektiven Preis je Kilowattstunde durch."
     >
       <Slider
-        label="Jahresverbrauch"
+        label={tr(locale, "Jahresverbrauch")}
         value={kwh}
         onChange={setKwh}
         min={500}

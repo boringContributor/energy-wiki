@@ -2,10 +2,12 @@
 
 import { useMemo, useState } from "react";
 
-import { euro, num } from "@/lib/utils";
+import type { Locale } from "@/lib/i18n";
+
+import { fmt } from "./i18n";
 import { cn } from "@/lib/utils";
 
-import { FigureShell, ResultRow, Segmented, Slider } from "./ui";
+import { FigureShell, ResultRow, Segmented, Slider, L, tf, tr, type FigureProps } from "./ui";
 
 /* ------------------------------------------------------------------ *
  * Photovoltaik
@@ -18,7 +20,8 @@ const ERTRAG: Record<string, { label: string; kwh: number }> = {
   flach: { label: "Flachdach", kwh: 900 },
 };
 
-export function PvRechner() {
+export function PvRechner({ locale }: FigureProps) {
+  const { num, euro } = fmt(locale);
   const [kwp, setKwp] = useState(9);
   const [lage, setLage] = useState("sued");
   const [speicher, setSpeicher] = useState<"ohne" | "mit">("ohne");
@@ -65,14 +68,15 @@ export function PvRechner() {
 
   return (
     <FigureShell
-      title="Was eine PV-Anlage bringt"
-      hint="Ertrag, Eigenverbrauch, Einspeisung"
+      locale={locale}
+      title={tr(locale, "Was eine PV-Anlage bringt")}
+      hint={tr(locale, "Ertrag, Eigenverbrauch, Einspeisung")}
       interactive
       footer="Modellrechnung mit der Einspeisevergütung für Überschusseinspeisung bis 10 kWp (7,70 ct/kWh ab August 2026, 20 Jahre garantiert). Der eigene Strom ist rund fünfmal so viel wert wie der eingespeiste – deshalb entscheidet die Eigenverbrauchsquote über die Wirtschaftlichkeit, nicht die Anlagengröße."
     >
       <div className="grid gap-4 @md:grid-cols-2">
         <Slider
-          label="Anlagengröße"
+          label={tr(locale, "Anlagengröße")}
           value={kwp}
           onChange={setKwp}
           min={2}
@@ -81,7 +85,7 @@ export function PvRechner() {
           display={`${num(kwp, 1)} kWp`}
         />
         <Slider
-          label="Stromverbrauch im Haushalt"
+          label={tr(locale, "Stromverbrauch im Haushalt")}
           value={verbrauch}
           onChange={setVerbrauch}
           min={1500}
@@ -90,7 +94,7 @@ export function PvRechner() {
           display={`${num(verbrauch)} kWh`}
         />
         <Slider
-          label="Strompreis (brutto)"
+          label={tr(locale, "Strompreis (brutto)")}
           value={strompreis}
           onChange={setStrompreis}
           min={20}
@@ -100,8 +104,8 @@ export function PvRechner() {
         />
         <div className="space-y-3">
           <Segmented
-            label="Dachausrichtung"
-            options={Object.entries(ERTRAG).map(([value, v]) => ({
+            label={tr(locale, "Dachausrichtung")}
+            options={Object.entries(L(locale, ERTRAG)).map(([value, v]) => ({
               value,
               label: v.label,
             }))}
@@ -109,10 +113,10 @@ export function PvRechner() {
             onChange={setLage}
           />
           <Segmented
-            label="Batteriespeicher"
+            label={tr(locale, "Batteriespeicher")}
             options={[
-              { value: "ohne", label: "ohne" },
-              { value: "mit", label: "mit Speicher" },
+              { value: "ohne", label: tr(locale, "ohne") },
+              { value: "mit", label: tr(locale, "mit Speicher") },
             ]}
             value={speicher}
             onChange={setSpeicher}
@@ -129,7 +133,7 @@ export function PvRechner() {
               background: "var(--anlage)",
             }}
           >
-            {m.eigen / m.ertrag > 0.14 && "Eigenverbrauch"}
+            {m.eigen / m.ertrag > 0.14 && tr(locale, "Eigenverbrauch")}
           </span>
           <span
             className="flex items-center justify-center text-2xs font-semibold text-white transition-[width] duration-300"
@@ -138,7 +142,7 @@ export function PvRechner() {
               background: "var(--strom)",
             }}
           >
-            {m.einspeisung / m.ertrag > 0.14 && "Einspeisung"}
+            {m.einspeisung / m.ertrag > 0.14 && tr(locale, "Einspeisung")}
           </span>
         </div>
         <div className="mt-2 flex justify-between text-2xs text-fg-subtle">
@@ -151,22 +155,22 @@ export function PvRechner() {
       </div>
 
       <dl className="mt-5 divide-y divide-border-base border-y border-border-base text-sm">
-        <Row label="Jahresertrag" value={`${num(m.ertrag, 0)} kWh`} />
+        <Row label={tr(locale, "Jahresertrag")} value={`${num(m.ertrag, 0)} kWh`} />
         <Row
-          label="Ersparnis durch Eigenverbrauch"
+          label={tr(locale, "Ersparnis durch Eigenverbrauch")}
           value={euro(m.ersparnis, 0)}
         />
-        <Row label="Einspeisevergütung 7,70 ct/kWh" value={euro(m.erloes, 0)} />
+        <Row label={tr(locale, "Einspeisevergütung 7,70 ct/kWh")} value={euro(m.erloes, 0)} />
         <Row
-          label="Autarkiegrad"
+          label={tr(locale, "Autarkiegrad")}
           value={`${num(Math.min(m.autarkie, 1) * 100, 0)} %`}
         />
       </dl>
 
       <ResultRow
-        label="Wirtschaftlicher Nutzen im Jahr"
+        label={tr(locale, "Wirtschaftlicher Nutzen im Jahr")}
         value={euro(m.nutzen, 0)}
-        hint={`Bei rund ${euro(m.invest, 0)} Investition amortisiert sich die Anlage in etwa ${num(m.jahre, 1)} Jahren.`}
+        hint={tf(locale, "Bei rund {0} Investition amortisiert sich die Anlage in etwa {1} Jahren.", euro(m.invest, 0), num(m.jahre, 1))}
       />
     </FigureShell>
   );
@@ -176,7 +180,8 @@ export function PvRechner() {
  * Wärmepumpe gegen Gasheizung
  * ------------------------------------------------------------------ */
 
-export function WaermepumpeRechner() {
+export function WaermepumpeRechner({ locale }: FigureProps) {
+  const { num, euro } = fmt(locale);
   const [bedarf, setBedarf] = useState(15000);
   const [jaz, setJaz] = useState(3.6);
   const [wpPreis, setWpPreis] = useState(24);
@@ -192,14 +197,15 @@ export function WaermepumpeRechner() {
 
   return (
     <FigureShell
-      title="Wärmepumpe oder Gasheizung?"
-      hint="Betriebskosten im Jahr"
+      locale={locale}
+      title={tr(locale, "Wärmepumpe oder Gasheizung?")}
+      hint={tr(locale, "Betriebskosten im Jahr")}
       interactive
       footer="Nur die Energiekosten, ohne Anschaffung, Wartung und Förderung. Die Jahresarbeitszahl ist die entscheidende Größe: Sie sagt, wie viele Kilowattstunden Wärme aus einer Kilowattstunde Strom werden. Typisch sind 3,2 bis 3,8 für Luft-Wasser- und 4,0 bis 4,5 für Sole-Wasser-Wärmepumpen."
     >
       <div className="grid gap-4 @md:grid-cols-2">
         <Slider
-          label="Heizwärmebedarf im Jahr"
+          label={tr(locale, "Heizwärmebedarf im Jahr")}
           value={bedarf}
           onChange={setBedarf}
           min={4000}
@@ -208,7 +214,7 @@ export function WaermepumpeRechner() {
           display={`${num(bedarf)} kWh`}
         />
         <Slider
-          label="Jahresarbeitszahl (JAZ)"
+          label={tr(locale, "Jahresarbeitszahl (JAZ)")}
           value={jaz}
           onChange={setJaz}
           min={2}
@@ -217,7 +223,7 @@ export function WaermepumpeRechner() {
           display={num(jaz, 1)}
         />
         <Slider
-          label="Wärmepumpentarif"
+          label={tr(locale, "Wärmepumpentarif")}
           value={wpPreis}
           onChange={setWpPreis}
           min={15}
@@ -226,7 +232,7 @@ export function WaermepumpeRechner() {
           display={`${num(wpPreis, 1)} ct/kWh`}
         />
         <Slider
-          label="Gaspreis"
+          label={tr(locale, "Gaspreis")}
           value={gasPreis}
           onChange={setGasPreis}
           min={5}
@@ -238,15 +244,17 @@ export function WaermepumpeRechner() {
 
       <div className="mt-6 space-y-3">
         <Bar
-          label="Wärmepumpe"
-          sub={`${num(strom, 0)} kWh Strom bei JAZ ${num(jaz, 1)}`}
+          locale={locale}
+          label={tr(locale, "Wärmepumpe")}
+          sub={tf(locale, "{0} kWh Strom bei JAZ {1}", num(strom, 0), num(jaz, 1))}
           value={wpKosten}
           max={Math.max(wpKosten, gasKosten)}
           color="var(--anlage)"
         />
         <Bar
-          label="Gas-Brennwertkessel"
-          sub={`${num(gasMenge, 0)} kWh Gas bei 92 % Nutzungsgrad`}
+          locale={locale}
+          label={tr(locale, "Gas-Brennwertkessel")}
+          sub={tf(locale, "{0} kWh Gas bei 92 % Nutzungsgrad", num(gasMenge, 0))}
           value={gasKosten}
           max={Math.max(wpKosten, gasKosten)}
           color="var(--gas)"
@@ -260,22 +268,27 @@ export function WaermepumpeRechner() {
         }}
       >
         <span className="text-sm font-medium text-fg">
-          {diff >= 0
-            ? "Die Wärmepumpe ist günstiger"
-            : "Die Gasheizung ist günstiger"}
+          {tr(
+            locale,
+            diff >= 0
+              ? "Die Wärmepumpe ist günstiger"
+              : "Die Gasheizung ist günstiger",
+          )}
         </span>
         <span
           className="font-mono text-lg font-semibold tabular-nums"
           style={{ color: diff >= 0 ? "var(--anlage)" : "var(--waerme)" }}
         >
-          {euro(Math.abs(diff), 0)} im Jahr
+          {tf(locale, "{0} im Jahr", euro(Math.abs(diff), 0))}
         </span>
       </div>
 
       <p className="mt-3 text-xs leading-6 text-fg-subtle">
-        Bei diesen Preisen liegt der Kipppunkt bei einer JAZ von{" "}
-        <span className="font-mono text-fg-muted">{num(breakEven, 2)}</span>.
-        Darüber lohnt sich die Wärmepumpe, darunter der Kessel.
+        {tf(
+          locale,
+          "Bei diesen Preisen liegt der Kipppunkt bei einer JAZ von {0}. Darüber lohnt sich die Wärmepumpe, darunter der Kessel.",
+          num(breakEven, 2),
+        )}
       </p>
     </FigureShell>
   );
@@ -380,20 +393,21 @@ const WP_TYPES: WpType[] = [
   },
 ];
 
-export function WaermepumpenTypen() {
+export function WaermepumpenTypen({ locale }: FigureProps) {
   const [activeId, setActiveId] = useState(WP_TYPES[0].id);
-  const active = WP_TYPES.find((t) => t.id === activeId)!;
+  const active = L(locale, WP_TYPES.find((t) => t.id === activeId)!);
 
   return (
     <FigureShell
-      title="Bauarten von Wärmepumpen"
-      hint="Wärmequelle und Abgabemedium im Namen"
+      locale={locale}
+      title={tr(locale, "Bauarten von Wärmepumpen")}
+      hint={tr(locale, "Wärmequelle und Abgabemedium im Namen")}
       interactive
       footer="Der Name folgt immer demselben Schema: erst die Wärmequelle, dann das Medium, an das die Wärme abgegeben wird. „Sole-Wasser“ heißt also: Wärme aus dem Erdreich über eine Solelösung, abgegeben an das Heizwasser."
     >
       <div className="grid gap-4 @2xl:grid-cols-[minmax(0,15rem)_1fr]">
         <ul className="flex gap-2 overflow-x-auto pb-1 @2xl:flex-col @2xl:overflow-visible @2xl:pb-0">
-          {WP_TYPES.map((t) => (
+          {L(locale, WP_TYPES).map((t) => (
             <li key={t.id} className="shrink-0 @2xl:shrink">
               <button
                 type="button"
@@ -481,18 +495,21 @@ function Row({ label, value }: { label: string; value: string }) {
 }
 
 function Bar({
+  locale,
   label,
   sub,
   value,
   max,
   color,
 }: {
+  locale: Locale;
   label: string;
   sub: string;
   value: number;
   max: number;
   color: string;
 }) {
+  const { euro } = fmt(locale);
   return (
     <div>
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 text-sm">

@@ -9,41 +9,41 @@ import { RichText } from "./RichText";
 
 const NOTE_STYLES: Record<
   string,
-  { ring: string; bg: string; dot: string; label: string; icon: ReactNode }
+  { ring: string; bg: string; dot: string; label: Record<Locale, string>; icon: ReactNode }
 > = {
   info: {
     ring: "border-gas/25",
     bg: "bg-gas-soft",
     dot: "text-gas",
-    label: "Gut zu wissen",
+    label: { de: "Gut zu wissen", en: "Good to know" },
     icon: <InfoIcon />,
   },
   tip: {
     ring: "border-accent/25",
     bg: "bg-accent-soft",
     dot: "text-accent",
-    label: "Merkhilfe",
+    label: { de: "Merkhilfe", en: "Rule of thumb" },
     icon: <BulbIcon />,
   },
   warn: {
     ring: "border-waerme/30",
     bg: "bg-waerme-soft",
     dot: "text-waerme",
-    label: "Achtung",
+    label: { de: "Achtung", en: "Careful" },
     icon: <WarnIcon />,
   },
   law: {
     ring: "border-recht/30",
     bg: "bg-recht-soft",
     dot: "text-recht",
-    label: "Rechtsgrundlage",
+    label: { de: "Rechtsgrundlage", en: "Legal basis" },
     icon: <ScaleIcon />,
   },
   praxis: {
     ring: "border-markt/25",
     bg: "bg-markt-soft",
     dot: "text-markt",
-    label: "Aus der Praxis",
+    label: { de: "Aus der Praxis", en: "From practice" },
     icon: <SparkIcon />,
   },
 };
@@ -231,7 +231,7 @@ function BlockView({ block, locale }: { block: Block; locale: Locale }) {
             <p
               className={`text-2xs font-semibold uppercase tracking-[0.09em] ${style.dot}`}
             >
-              {block.title ?? style.label}
+              {block.title ?? style.label[locale]}
             </p>
             <p className="mt-1 leading-7 text-fg-muted">
               <RichText text={block.text} locale={locale} />

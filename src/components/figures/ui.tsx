@@ -1,20 +1,32 @@
 "use client";
 
+import type { Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
+import { L, tf, tr, type FigureProps } from "./i18n";
+
+export { L, tf, tr };
+export type { FigureProps };
+
 export function FigureShell({
+  locale,
   title,
   hint,
   interactive,
   children,
   footer,
 }: {
+  locale: Locale;
   title: string;
   hint?: string;
   interactive?: boolean;
   children: React.ReactNode;
   footer?: React.ReactNode;
 }) {
+  title = tr(locale, title);
+  hint = hint ? tr(locale, hint) : hint;
+  footer = typeof footer === "string" ? tr(locale, footer) : footer;
+  const interactiveLabel = tr(locale, "interaktiv");
   return (
     <div className="@container overflow-hidden rounded-2xl border border-border-base bg-surface">
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-border-base bg-surface-2 px-5 py-3.5 @xl:px-6">
@@ -23,7 +35,7 @@ export function FigureShell({
         {interactive && (
           <span className="ml-auto flex items-center gap-1.5 rounded-full bg-accent-soft px-2 py-0.5 text-2xs font-semibold uppercase tracking-[0.08em] text-accent">
             <span aria-hidden className="ew-pulse-soft size-1.5 rounded-full bg-accent" />
-            interaktiv
+            {interactiveLabel}
           </span>
         )}
       </div>

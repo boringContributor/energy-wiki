@@ -1,17 +1,26 @@
 /* Static, server-rendered diagrams. Motion is CSS only and respects
  * prefers-reduced-motion through the utility classes in globals.css. */
 
+import type { Locale } from "@/lib/i18n";
+
+import { L, tr, type FigureProps } from "./i18n";
+
 function Frame({
+  locale,
   title,
   hint,
   children,
   footer,
 }: {
+  locale: Locale;
   title: string;
   hint?: string;
   children: React.ReactNode;
   footer?: React.ReactNode;
 }) {
+  title = tr(locale, title);
+  hint = hint ? tr(locale, hint) : hint;
+  footer = typeof footer === "string" ? tr(locale, footer) : footer;
   return (
     <div className="@container overflow-hidden rounded-2xl border border-border-base bg-surface">
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 border-b border-border-base bg-surface-2 px-5 py-3.5 @xl:px-6">
@@ -65,11 +74,12 @@ const CHAIN = [
   },
 ];
 
-export function Wertschoepfungskette() {
+export function Wertschoepfungskette({ locale }: FigureProps) {
   return (
     <Frame
-      title="Von der Erzeugung bis zur Steckdose"
-      hint="Physischer Weg der Energie"
+      locale={locale}
+      title={tr(locale, "Von der Erzeugung bis zur Steckdose")}
+      hint={tr(locale, "Physischer Weg der Energie")}
       footer="Der Lieferant taucht in dieser Kette physisch gar nicht auf: Er kauft die Energiemenge ein, bilanziert sie und rechnet sie mit dem Kunden ab. Transportiert wird sie von Netzbetreibern, gemessen vom Messstellenbetreiber."
     >
       {/* One markup, two readings: a vertical rail while the column is narrow,
@@ -80,7 +90,7 @@ export function Wertschoepfungskette() {
           aria-hidden
           className="absolute bottom-5 left-[1.125rem] top-5 w-px bg-[var(--border)] @4xl:hidden"
         />
-        {CHAIN.map((step, i) => (
+        {L(locale, CHAIN).map((step, i) => (
           <li
             key={step.title}
             /* min-w-0: grid items default to min-width:auto, which lets long
@@ -171,15 +181,16 @@ const ROLES = [
   },
 ];
 
-export function Marktrollen() {
+export function Marktrollen({ locale }: FigureProps) {
   return (
     <Frame
-      title="Wer ist wer im Energiemarkt"
-      hint="Marktrollen und ihre Aufgaben"
+      locale={locale}
+      title={tr(locale, "Wer ist wer im Energiemarkt")}
+      hint={tr(locale, "Marktrollen und ihre Aufgaben")}
       footer="Ein Unternehmen kann mehrere Rollen ausfüllen – ein Stadtwerk ist oft gleichzeitig Lieferant, Verteilnetzbetreiber, grundzuständiger Messstellenbetreiber und Grundversorger. Rechtlich müssen die Bereiche getrennt sein (Entflechtung, „Unbundling“)."
     >
       <ul className="grid gap-3 @md:grid-cols-2">
-        {ROLES.map((role) => (
+        {L(locale, ROLES).map((role) => (
           <li
             key={role.code}
             className="flex gap-3 rounded-xl border border-border-base bg-surface-2 p-4"
@@ -212,11 +223,12 @@ export function Marktrollen() {
  * MaLo / MeLo
  * ------------------------------------------------------------------ */
 
-export function MaloMelo() {
+export function MaloMelo({ locale }: FigureProps) {
   return (
     <Frame
-      title="Marktlokation und Messlokation"
-      hint="Ein Haus, zwei Nummernwelten"
+      locale={locale}
+      title={tr(locale, "Marktlokation und Messlokation")}
+      hint={tr(locale, "Ein Haus, zwei Nummernwelten")}
       footer="Faustregel: Die MaLo ist die kaufmännische Adresse für Lieferung und Abrechnung, die MeLo die technische Adresse des Zählers. Eine Marktlokation kann mehrere Messlokationen haben – etwa wenn ein Verbrauch über zwei Zähler erfasst wird."
     >
       <div className="grid gap-4 @xl:grid-cols-2">
@@ -225,17 +237,20 @@ export function MaloMelo() {
             Marktlokation (MaLo)
           </p>
           <p className="mt-2 text-sm leading-6 text-fg-muted">
-            Der Ort, an dem Energie entnommen oder eingespeist wird – aus Sicht
-            des Marktes. Alles, was mit Vertrag, Lieferung und Bilanzierung zu
-            tun hat, hängt an dieser Nummer.
+            {tr(
+              locale,
+              "Der Ort, an dem Energie entnommen oder eingespeist wird – aus Sicht des Marktes. Alles, was mit Vertrag, Lieferung und Bilanzierung zu tun hat, hängt an dieser Nummer.",
+            )}
           </p>
           <p className="mt-4 font-mono text-lg tracking-wider text-fg">
             5 1 2 3 8 0 0 6 1 2 3
           </p>
           <ul className="mt-2 space-y-1 text-xs text-fg-subtle">
-            <li>11 Ziffern</li>
-            <li>erste Ziffer = vergebende Stelle (BDEW Strom, DVGW Gas)</li>
-            <li>letzte Ziffer = Prüfziffer</li>
+            <li>{tr(locale, "11 Ziffern")}</li>
+            <li>
+              {tr(locale, "erste Ziffer = vergebende Stelle (BDEW Strom, DVGW Gas)")}
+            </li>
+            <li>{tr(locale, "letzte Ziffer = Prüfziffer")}</li>
           </ul>
         </div>
 
@@ -244,44 +259,45 @@ export function MaloMelo() {
             Messlokation (MeLo)
           </p>
           <p className="mt-2 text-sm leading-6 text-fg-muted">
-            Der Ort, an dem tatsächlich gemessen wird – also der Zählerplatz.
-            Messwerte, Zählerwechsel und Messstellenbetrieb hängen an dieser
-            Nummer.
+            {tr(
+              locale,
+              "Der Ort, an dem tatsächlich gemessen wird – also der Zählerplatz. Messwerte, Zählerwechsel und Messstellenbetrieb hängen an dieser Nummer.",
+            )}
           </p>
           <p className="mt-4 break-all font-mono text-sm tracking-wide text-fg">
             DE00056266802AO6G56M11SN51G21M24S
           </p>
           <ul className="mt-2 space-y-1 text-xs text-fg-subtle">
-            <li>33 Stellen, beginnt mit dem Ländercode DE</li>
-            <li>enthält die Nummer des Netzbetreibers</li>
-            <li>früher „Zählpunktbezeichnung“</li>
+            <li>{tr(locale, "33 Stellen, beginnt mit dem Ländercode DE")}</li>
+            <li>{tr(locale, "enthält die Nummer des Netzbetreibers")}</li>
+            <li>{tr(locale, "früher „Zählpunktbezeichnung“")}</li>
           </ul>
         </div>
       </div>
 
       <div className="mt-4 rounded-xl border border-border-base p-4">
         <p className="text-xs font-semibold uppercase tracking-[0.08em] text-fg-subtle">
-          Typische Konstellationen
+          {tr(locale, "Typische Konstellationen")}
         </p>
         <ul className="mt-3 space-y-2 text-sm text-fg-muted">
-          <li className="flex gap-2">
-            <span className="font-mono text-xs text-accent">1 : 1</span>
-            <span>Wohnung mit einem Zähler – der Normalfall.</span>
-          </li>
-          <li className="flex gap-2">
-            <span className="font-mono text-xs text-accent">1 : n</span>
-            <span>
-              Eine Marktlokation, mehrere Zähler – etwa Haupt- und
-              Unterzähler, die saldiert werden.
-            </span>
-          </li>
-          <li className="flex gap-2">
-            <span className="font-mono text-xs text-accent">2 : 1</span>
-            <span>
-              Ein Zähler, zwei Marktlokationen – Zweirichtungszähler einer
-              PV-Anlage: eine MaLo für den Bezug, eine für die Einspeisung.
-            </span>
-          </li>
+          {L(locale, [
+            { ratio: "1 : 1", text: "Wohnung mit einem Zähler – der Normalfall." },
+            {
+              ratio: "1 : n",
+              text: "Eine Marktlokation, mehrere Zähler – etwa Haupt- und Unterzähler, die saldiert werden.",
+            },
+            {
+              ratio: "2 : 1",
+              text: "Ein Zähler, zwei Marktlokationen – Zweirichtungszähler einer PV-Anlage: eine MaLo für den Bezug, eine für die Einspeisung.",
+            },
+          ]).map((c) => (
+            <li key={c.ratio} className="flex gap-2">
+              <span className="shrink-0 font-mono text-xs text-accent">
+                {c.ratio}
+              </span>
+              <span>{c.text}</span>
+            </li>
+          ))}
         </ul>
       </div>
     </Frame>
@@ -292,11 +308,12 @@ export function MaloMelo() {
  * Zähleranatomie
  * ------------------------------------------------------------------ */
 
-export function ZaehlerAnatomie() {
+export function ZaehlerAnatomie({ locale }: FigureProps) {
   return (
     <Frame
-      title="Was auf dem Zähler steht"
-      hint="Moderne Messeinrichtung, digital"
+      locale={locale}
+      title={tr(locale, "Was auf dem Zähler steht")}
+      hint={tr(locale, "Moderne Messeinrichtung, digital")}
       footer="Für die Ablesung zählt nur das Vorkomma: Nachkommastellen sind meist rot abgesetzt oder gar nicht erst angezeigt. Die Zählernummer identifiziert das Gerät, nicht den Anschluss – nach einem Zählerwechsel ändert sie sich, die Messlokations-ID bleibt."
     >
       <div className="grid gap-5 @xl:grid-cols-[minmax(0,20rem)_1fr] @xl:items-center">
@@ -411,23 +428,23 @@ export function ZaehlerAnatomie() {
         <dl className="space-y-3 text-sm">
           <Callout
             marker="1.8.0"
-            title="OBIS-Kennzahl"
-            text="Sagt, welches Register angezeigt wird. 1.8.0 = Bezug gesamt, 1.8.1/1.8.2 = Hoch- und Niedertarif, 2.8.0 = Einspeisung."
+            title={tr(locale, "OBIS-Kennzahl")}
+            text={tr(locale, "Sagt, welches Register angezeigt wird. 1.8.0 = Bezug gesamt, 1.8.1/1.8.2 = Hoch- und Niedertarif, 2.8.0 = Einspeisung.")}
           />
           <Callout
             marker="014729,3"
-            title="Zählerstand"
-            text="Der aufsummierte Zählerstand in kWh. Abgelesen wird nur die schwarze Vorkommazahl."
+            title={tr(locale, "Zählerstand")}
+            text={tr(locale, "Der aufsummierte Zählerstand in kWh. Abgelesen wird nur die schwarze Vorkommazahl.")}
           />
           <Callout
             marker="1 EMH 0012 3456"
-            title="Zählernummer"
-            text="Eindeutige Gerätenummer. Steht auf dem Typenschild und wird bei jedem Zählerwechsel neu."
+            title={tr(locale, "Zählernummer")}
+            text={tr(locale, "Eindeutige Gerätenummer. Steht auf dem Typenschild und wird bei jedem Zählerwechsel neu.")}
           />
           <Callout
             marker="◎"
-            title="Optische Schnittstelle"
-            text="Infrarot-Lesekopf für den Messstellenbetreiber – und für Auslesegeräte, die der Kunde selbst anschließt."
+            title={tr(locale, "Optische Schnittstelle")}
+            text={tr(locale, "Infrarot-Lesekopf für den Messstellenbetreiber – und für Auslesegeräte, die der Kunde selbst anschließt.")}
           />
         </dl>
       </div>
@@ -463,40 +480,41 @@ function Callout({
  * Smart-Meter-Gateway
  * ------------------------------------------------------------------ */
 
-export function SmartMeterGateway() {
+export function SmartMeterGateway({ locale }: FigureProps) {
   return (
     <Frame
-      title="Aufbau eines intelligenten Messsystems"
-      hint="moderne Messeinrichtung + Smart-Meter-Gateway"
+      locale={locale}
+      title={tr(locale, "Aufbau eines intelligenten Messsystems")}
+      hint={tr(locale, "moderne Messeinrichtung + Smart-Meter-Gateway")}
       footer="Erst die Kombination aus moderner Messeinrichtung und Smart-Meter-Gateway ergibt ein intelligentes Messsystem (iMSys). Das Gateway ist das sicherheitszertifizierte Herzstück: Es sammelt Messwerte, verschlüsselt sie und gibt jedem Marktteilnehmer nur die Daten, auf die er ein Recht hat."
     >
       <div className="grid gap-3 @xl:grid-cols-[1fr_auto_1fr_auto_1fr] @xl:items-center">
         <Node
           tone="var(--messung)"
           label="LMN"
-          title="Moderne Messeinrichtung"
-          text="Digitaler Zähler, misst und speichert 24 Monate rückwirkend."
+          title={tr(locale, "Moderne Messeinrichtung")}
+          text={tr(locale, "Digitaler Zähler, misst und speichert 24 Monate rückwirkend.")}
         />
         <Arrow />
         <Node
           tone="var(--accent)"
           label="SMGW"
-          title="Smart-Meter-Gateway"
-          text="Kommunikationseinheit nach BSI-Schutzprofil. Bildet Tarifanwendungsfälle ab und protokolliert jeden Zugriff."
+          title={tr(locale, "Smart-Meter-Gateway")}
+          text={tr(locale, "Kommunikationseinheit nach BSI-Schutzprofil. Bildet Tarifanwendungsfälle ab und protokolliert jeden Zugriff.")}
         />
         <Arrow />
         <div className="space-y-2">
           <Node
             tone="var(--gas)"
             label="WAN"
-            title="Externe Marktteilnehmer"
-            text="Messstellenbetreiber, Netzbetreiber, Lieferant – jeder erhält nur seinen Ausschnitt."
+            title={tr(locale, "Externe Marktteilnehmer")}
+            text={tr(locale, "Messstellenbetreiber, Netzbetreiber, Lieferant – jeder erhält nur seinen Ausschnitt.")}
           />
           <Node
             tone="var(--markt)"
             label="HAN"
-            title="Heimnetz"
-            text="Der Kunde selbst, Wärmepumpe, Wallbox, Energiemanagement."
+            title={tr(locale, "Heimnetz")}
+            text={tr(locale, "Der Kunde selbst, Wärmepumpe, Wallbox, Energiemanagement.")}
           />
         </div>
       </div>
@@ -575,15 +593,16 @@ const SWITCH_STEPS = [
   },
 ];
 
-export function Lieferantenwechsel() {
+export function Lieferantenwechsel({ locale }: FigureProps) {
   return (
     <Frame
-      title="Ablauf eines Lieferantenwechsels"
-      hint="Was zwischen Unterschrift und erster Rechnung passiert"
+      locale={locale}
+      title={tr(locale, "Ablauf eines Lieferantenwechsels")}
+      hint={tr(locale, "Was zwischen Unterschrift und erster Rechnung passiert")}
       footer="Der Kunde merkt vom Wechsel physisch nichts: Es fließt derselbe Strom durch dasselbe Netz. Was wechselt, ist die Zuordnung der Entnahmestelle zu einem Bilanzkreis – und damit die Frage, wer die Energie beschafft und abrechnet."
     >
       <ol className="relative space-y-5 border-l border-border-base pl-7">
-        {SWITCH_STEPS.map((step, i) => (
+        {L(locale, SWITCH_STEPS).map((step, i) => (
           <li key={step.title} className="relative">
             <span className="absolute -left-[2.32rem] top-0.5 flex size-6 items-center justify-center rounded-full border border-border-base bg-surface font-mono text-2xs font-semibold text-accent">
               {i + 1}
@@ -614,15 +633,16 @@ const LEVELS = [
   { name: "Niederspannung", volt: "400 / 230 V", who: "Haushalte, kleines Gewerbe", w: 24 },
 ];
 
-export function Netzebenen() {
+export function Netzebenen({ locale }: FigureProps) {
   return (
     <Frame
-      title="Die sieben Netzebenen"
-      hint="Und warum Netzentgelte je Ebene verschieden hoch sind"
+      locale={locale}
+      title={tr(locale, "Die sieben Netzebenen")}
+      hint={tr(locale, "Und warum Netzentgelte je Ebene verschieden hoch sind")}
       footer="Wer auf einer unteren Ebene entnimmt, nutzt alle darüberliegenden mit – deshalb zahlt ein Haushalt in der Niederspannung das höchste Netzentgelt je Kilowattstunde und ein Industriebetrieb mit Hochspannungsanschluss das niedrigste."
     >
       <ul className="space-y-1.5">
-        {LEVELS.map((level, i) => (
+        {L(locale, LEVELS).map((level, i) => (
           <li key={level.name} className="flex items-center gap-4">
             {/* The bar scales inside a fixed track. Sizing the bar itself off
                 the row let the 100 % level claim the whole width and squeeze
@@ -699,15 +719,16 @@ const BILL_PARTS = [
   },
 ];
 
-export function RechnungAnatomie() {
+export function RechnungAnatomie({ locale }: FigureProps) {
   return (
     <Frame
-      title="Anatomie einer Jahresabrechnung"
-      hint="Was gesetzlich draufstehen muss"
+      locale={locale}
+      title={tr(locale, "Anatomie einer Jahresabrechnung")}
+      hint={tr(locale, "Was gesetzlich draufstehen muss")}
       footer="Die Pflichtangaben stehen in § 40 EnWG. Fehlt eine davon, ist die Rechnung angreifbar – ein Grund, warum Abrechnungssysteme so viele Felder mitschleppen."
     >
       <ol className="grid gap-3 @md:grid-cols-2">
-        {BILL_PARTS.map((part) => (
+        {L(locale, BILL_PARTS).map((part) => (
           <li
             key={part.n}
             className="flex gap-3 rounded-xl border border-border-base bg-surface-2 p-3.5"
@@ -734,11 +755,12 @@ export function RechnungAnatomie() {
  * Blindleistung
  * ------------------------------------------------------------------ */
 
-export function Blindleistung() {
+export function Blindleistung({ locale }: FigureProps) {
   return (
     <Frame
-      title="Wirk-, Blind- und Scheinleistung"
-      hint="Das Bierglas-Modell"
+      locale={locale}
+      title={tr(locale, "Wirk-, Blind- und Scheinleistung")}
+      hint={tr(locale, "Das Bierglas-Modell")}
       footer="Wirkleistung (kW) verrichtet Arbeit, Blindleistung (kvar) baut die Magnetfelder in Motoren und Transformatoren auf. Beides zusammen belastet das Netz als Scheinleistung (kVA). Haushalte zahlen keine Blindarbeit – Gewerbekunden mit Leistungsmessung schon, sobald sie eine vereinbarte Grenze überschreiten."
     >
       <div className="grid gap-5 @md:grid-cols-[minmax(0,16rem)_1fr] @md:items-center">
@@ -798,18 +820,18 @@ export function Blindleistung() {
         <dl className="space-y-3 text-sm">
           <Callout
             marker="kW"
-            title="Wirkleistung"
-            text="Was tatsächlich zu Licht, Wärme oder Bewegung wird. Sie steht auf der Stromrechnung als Verbrauch in kWh."
+            title={tr(locale, "Wirkleistung")}
+            text={tr(locale, "Was tatsächlich zu Licht, Wärme oder Bewegung wird. Sie steht auf der Stromrechnung als Verbrauch in kWh.")}
           />
           <Callout
             marker="kvar"
-            title="Blindleistung"
-            text="Pendelt zwischen Netz und Verbraucher hin und her, verrichtet keine Arbeit, belastet aber Leitungen. Gemessen in kvarh."
+            title={tr(locale, "Blindleistung")}
+            text={tr(locale, "Pendelt zwischen Netz und Verbraucher hin und her, verrichtet keine Arbeit, belastet aber Leitungen. Gemessen in kvarh.")}
           />
           <Callout
             marker="cos φ"
-            title="Leistungsfaktor"
-            text="Verhältnis von Wirk- zu Scheinleistung. Netzbetreiber verlangen meist mindestens 0,9 – darunter wird Blindarbeit berechnet."
+            title={tr(locale, "Leistungsfaktor")}
+            text={tr(locale, "Verhältnis von Wirk- zu Scheinleistung. Netzbetreiber verlangen meist mindestens 0,9 – darunter wird Blindarbeit berechnet.")}
           />
         </dl>
       </div>
@@ -832,15 +854,16 @@ const PORTAL_FEATURES = [
   { title: "Produkte kaufen", text: "Tarifwechsel, Zusatzprodukte, Wallbox oder Wärmepumpe direkt beauftragen.", tone: "var(--strom)" },
 ];
 
-export function PortalFunktionen() {
+export function PortalFunktionen({ locale }: FigureProps) {
   return (
     <Frame
-      title="Was ein Endkundenportal können muss"
-      hint="Die acht Klassiker"
+      locale={locale}
+      title={tr(locale, "Was ein Endkundenportal können muss")}
+      hint={tr(locale, "Die acht Klassiker")}
       footer="Jede dieser Funktionen spart einen Anruf im Kundenservice. Deshalb misst man Portale in der Praxis nicht an der Zahl der Features, sondern an der Selbstbedienungsquote: dem Anteil der Anliegen, die ohne Mitarbeiter erledigt werden."
     >
       <ul className="grid gap-3 @sm:grid-cols-2 @2xl:grid-cols-4">
-        {PORTAL_FEATURES.map((f) => (
+        {L(locale, PORTAL_FEATURES).map((f) => (
           <li
             key={f.title}
             className="rounded-xl border border-border-base bg-surface-2 p-3.5"
@@ -872,11 +895,12 @@ const ANLAGEN = [
   { n: "6", name: "Warmwasserspeicher", text: "Puffert Wärme und ist damit selbst ein Speicher für PV-Überschuss.", tone: "var(--waerme)" },
 ];
 
-export function AnlagenUebersicht() {
+export function AnlagenUebersicht({ locale }: FigureProps) {
   return (
     <Frame
-      title="Was heute alles hinter dem Zähler steht"
-      hint="Ein Haushalt ist längst kein reiner Verbraucher mehr"
+      locale={locale}
+      title={tr(locale, "Was heute alles hinter dem Zähler steht")}
+      hint={tr(locale, "Ein Haushalt ist längst kein reiner Verbraucher mehr")}
       footer="Jedes dieser Geräte verändert etwas am Vertragsverhältnis: die PV-Anlage braucht eine zweite Marktlokation, Wärmepumpe und Wallbox fallen unter § 14a EnWG, der Speicher verschiebt den Verbrauch in andere Stunden. Aus dem Letztverbraucher wird ein Prosumer – jemand, der zugleich verbraucht und erzeugt."
     >
       <div className="grid gap-6 @2xl:grid-cols-[minmax(0,22rem)_1fr] @2xl:items-start">
@@ -922,7 +946,7 @@ export function AnlagenUebersicht() {
         </svg>
 
         <ol className="grid gap-3 @md:grid-cols-2 @2xl:grid-cols-1 @4xl:grid-cols-2">
-          {ANLAGEN.map((a) => (
+          {L(locale, ANLAGEN).map((a) => (
             <li key={a.n} className="flex min-w-0 gap-3">
               <span
                 className="flex size-6 shrink-0 items-center justify-center rounded-full font-mono text-2xs font-semibold"
@@ -958,16 +982,17 @@ const HEIZUNGEN = [
   { name: "Direktstromheizung", traeger: "Strom", effizienz: 99, effLabel: "99 % – aber 1 kWh je kWh", co2: "abhängig vom Strommix", tone: "var(--recht)" },
 ];
 
-export function Heizungsvergleich() {
+export function Heizungsvergleich({ locale }: FigureProps) {
   const max = Math.max(...HEIZUNGEN.map((h) => h.effizienz));
   return (
     <Frame
-      title="Heizsysteme im Vergleich"
-      hint="Wie viel Wärme aus einer Einheit Energie wird"
+      locale={locale}
+      title={tr(locale, "Heizsysteme im Vergleich")}
+      hint={tr(locale, "Wie viel Wärme aus einer Einheit Energie wird")}
       footer="Der Balken zeigt, wie viele Kilowattstunden Wärme aus einer Kilowattstunde eingekaufter Energie entstehen. Nur die Wärmepumpe kommt über 100 %, weil sie Umweltwärme dazuholt statt Brennstoff zu verbrennen – deshalb ist sie trotz des höheren Strompreises meist günstiger im Betrieb."
     >
       <ul className="space-y-4">
-        {HEIZUNGEN.map((h) => (
+        {L(locale, HEIZUNGEN).map((h) => (
           <li key={h.name}>
             <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
               <span className="text-sm font-medium text-fg">{h.name}</span>
@@ -1001,11 +1026,12 @@ const FOMA_STEPS = [
   { at: 92, label: "Stichtag", sub: "1. April oder 1. Oktober", tone: "var(--waerme)" },
 ];
 
-export function FormatwechselZyklus() {
+export function FormatwechselZyklus({ locale }: FigureProps) {
   return (
     <Frame
-      title="Ein Formatwechsel von der Konsultation bis zum Stichtag"
-      hint="Zweimal im Jahr, immer nach demselben Muster"
+      locale={locale}
+      title={tr(locale, "Ein Formatwechsel von der Konsultation bis zum Stichtag")}
+      hint={tr(locale, "Zweimal im Jahr, immer nach demselben Muster")}
       footer="Um Mitternacht des Stichtags verlieren die alten Versionen ihre Gültigkeit – ohne Übergangszeitraum. Wer nicht umgestellt hat, kann nicht mehr mit dem Markt kommunizieren. Die rund sechs Monate zwischen Festlegung und Stichtag sind das gesamte Fenster, in dem Softwarehersteller entwickeln und ausliefern und Versorger einbauen, testen und schulen müssen."
     >
       {/* Three milestones sit at 1/6, 1/2 and 5/6 of the width, so the
@@ -1017,7 +1043,7 @@ export function FormatwechselZyklus() {
           style={{ background: "var(--accent-soft)" }}
         >
           <span className="text-2xs font-semibold uppercase tracking-[0.08em] text-accent">
-            ~6 Monate
+            {tr(locale, "~6 Monate")}
           </span>
         </div>
 
@@ -1028,7 +1054,7 @@ export function FormatwechselZyklus() {
             style={{ background: "var(--border-strong)" }}
           />
           <ol className="relative flex">
-            {FOMA_STEPS.map((step) => (
+            {L(locale, FOMA_STEPS).map((step) => (
               <li
                 key={step.label}
                 className="flex min-w-0 flex-1 flex-col items-center"
@@ -1055,11 +1081,11 @@ export function FormatwechselZyklus() {
       </div>
 
       <dl className="mt-6 grid gap-3 border-t border-border-base pt-5 @md:grid-cols-3">
-        {[
+        {L(locale, [
           { k: "Betroffene Prozesse", v: "GPKE, MaBiS, WiM, MPES" },
           { k: "Stichtage", v: "1. April und 1. Oktober" },
           { k: "Umsetzungsfenster", v: "rund 6 Monate, keine Übergangsfrist" },
-        ].map((f) => (
+        ]).map((f) => (
           <div key={f.k} className="min-w-0">
             <dt className="text-2xs uppercase tracking-[0.08em] text-fg-subtle">
               {f.k}

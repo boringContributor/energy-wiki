@@ -10,7 +10,9 @@ import { abrechnungArticles } from "./articles/abrechnung";
 import { kundeArticles } from "./articles/kunde";
 import { rechtArticles } from "./articles/recht";
 
-export const articles: Article[] = [
+import { enBodies } from "./translations";
+
+const sources: Article[] = [
   ...grundlagenArticles,
   ...spartenArticles,
   ...anlagenArticles,
@@ -20,6 +22,16 @@ export const articles: Article[] = [
   ...kundeArticles,
   ...rechtArticles,
 ];
+
+/**
+ * German is authored inline; English bodies live in ./translations and are
+ * merged here. An article without a translation keeps only `de` and the article
+ * page shows the fallback banner.
+ */
+export const articles: Article[] = sources.map((article) => {
+  const en = enBodies[article.slug];
+  return en ? { ...article, body: { ...article.body, en } } : article;
+});
 
 export const articleBySlug = new Map<string, Article>(
   articles.map((a) => [a.slug, a]),
