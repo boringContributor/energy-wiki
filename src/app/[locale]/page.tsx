@@ -5,6 +5,7 @@ import { CategoryIcon } from "@/components/CategoryIcon";
 import { Lottie } from "@/components/lottie/Lottie";
 import { GridBackdrop } from "@/components/home/GridBackdrop";
 import { articles, articlesInCategory, categories, getArticle } from "@/content";
+import { HERO_ANIMATION } from "@/lib/heroAnimation";
 import { isLocale, s, t, type Locale } from "@/lib/i18n";
 import { stripMarkup } from "@/lib/utils";
 
@@ -119,7 +120,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
 
           <div className="relative hidden lg:block">
             <Lottie
-              name="energy-flow"
+              name={HERO_ANIMATION}
               className="mx-auto w-full max-w-xl"
               ariaLabel={
                 l === "de"

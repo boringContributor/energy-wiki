@@ -37,6 +37,9 @@ src/
 scripts/
   check-content.mjs        Prüft Wiki-Links, Related-Slugs und Figure-IDs
   shots.mjs                Screenshots hell/dunkel/mobil nach .shots/
+  lottie/lib.mjs           Lottie-Bausteine (Pfade, Keyframes, Verläufe)
+  lottie/build.mjs         Erzeugt die Hero-Szenen
+  lottie/shots.mjs         Pinnt Einzelbilder im Skottie-Player
 public/lottie/             Lottie-Szenen
 ```
 
@@ -130,16 +133,40 @@ Bewegung ist zurückhaltend und respektiert überall `prefers-reduced-motion`.
 
 - **CSS/SVG** für alles Datengetriebene: die Grafiken in `src/components/figures`
   sind normale React-Komponenten.
-- **Lottie** für die beiden erzählerischen Szenen in `public/lottie`
-  (`energy-flow` auf der Startseite, `broken-line` auf der 404-Seite). Sie wurden
-  im offiziellen Skia-Skottie-Player von Diffusion Studio erstellt und geprüft:
+- **Lottie** für die erzählerischen Szenen in `public/lottie`. Die Startseite
+  spielt eine davon, die 404-Seite `broken-line`.
+
+  Die vier Hero-Varianten werden **generiert**, nicht von Hand geschrieben –
+  Choreografie mit Versatz per Hand ist in rohem JSON nicht zu pflegen:
+
+  ```bash
+  node scripts/lottie/build.mjs     # schreibt Player-Kopie + minifizierte Kopie
+  ```
+
+  Geprüft wird im offiziellen Skia-Skottie-Player von Diffusion Studio:
 
   ```bash
   npx degit diffusionstudio/lottie lottie-player
   cd lottie-player && npm install && npm run dev
-  # Szene unter public/projects/<projekt>/<scene-N>/lottie.json bearbeiten,
-  # Frames mit ?frame=N prüfen, danach minifiziert nach public/lottie kopieren
+  # zurück im Wiki, Einzelbilder pinnen:
+  node scripts/lottie/shots.mjs "scene-3,scene-4" "0,60,120,179"
   ```
+
+  Wo welche Szene läuft, steht in `src/lib/heroAnimation.ts`:
+
+  | Szene | Ort |
+  | --- | --- |
+  | `hero-prosumer` | Startseite |
+  | `hero-netzpuls` | Thema „Markt & Grundlagen“ |
+  | `energy-flow` | Thema „Sparten“ |
+  | `hero-tarifkurve` | Thema „Tarife & Preisbildung“ |
+  | `hero-zaehler` | Thema „Zähler & Messwesen“ |
+  | `broken-line` | 404-Seite |
+
+  Themen ohne Eintrag in `CATEGORY_ANIMATIONS` bekommen einen reinen
+  Textkopf – lieber eine ehrliche Lücke als eine Szene, die nicht zum Thema
+  passt. `/de/hero-varianten` stellt alle nebeneinander; die Seite ist nirgends
+  verlinkt.
 
   Die Szenen kommen ohne Slots und ohne Ausdrücke aus, weil sie im Wiki von
   `lottie-react` (lottie-web) abgespielt werden – Farben sind deshalb inline und

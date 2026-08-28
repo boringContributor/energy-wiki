@@ -8,6 +8,8 @@ import {
   categoryById,
   type CategoryId,
 } from "@/content";
+import { Lottie } from "@/components/lottie/Lottie";
+import { CATEGORY_ANIMATIONS } from "@/lib/heroAnimation";
 import { isLocale, locales, s, t, type Locale } from "@/lib/i18n";
 import { stripMarkup } from "@/lib/utils";
 
@@ -40,6 +42,7 @@ export default async function CategoryPage({
   if (!cat) notFound();
 
   const items = articlesInCategory(cat.id);
+  const animation = CATEGORY_ANIMATIONS[cat.id];
 
   return (
     <div className="max-w-3xl py-8 lg:py-12">
@@ -50,22 +53,38 @@ export default async function CategoryPage({
         ← {s("backToOverview", l)}
       </Link>
 
-      <header className="ew-rise mt-5">
-        <span
-          className="inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-2xs font-semibold uppercase tracking-[0.09em]"
-          style={{
-            background: `var(--${cat.tone}-soft)`,
-            color: `var(--${cat.tone})`,
-          }}
-        >
-          {items.length} {s("articles", l)}
-        </span>
-        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-fg sm:text-4xl">
-          {t(cat.title, l)}
-        </h1>
-        <p className="mt-3 text-lg leading-relaxed text-fg-muted">
-          {t(cat.summary, l)}
-        </p>
+      <header
+        className={
+          animation
+            ? "ew-rise mt-5 gap-8 lg:grid lg:grid-cols-[1fr_minmax(0,16rem)] lg:items-center"
+            : "ew-rise mt-5"
+        }
+      >
+        <div className="min-w-0">
+          <span
+            className="inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-2xs font-semibold uppercase tracking-[0.09em]"
+            style={{
+              background: `var(--${cat.tone}-soft)`,
+              color: `var(--${cat.tone})`,
+            }}
+          >
+            {items.length} {s("articles", l)}
+          </span>
+          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-fg sm:text-4xl">
+            {t(cat.title, l)}
+          </h1>
+          <p className="mt-3 text-lg leading-relaxed text-fg-muted">
+            {t(cat.summary, l)}
+          </p>
+        </div>
+
+        {animation && (
+          <Lottie
+            name={animation}
+            className="hidden w-full lg:block"
+            ariaLabel={t(cat.title, l)}
+          />
+        )}
       </header>
 
       <ul className="mt-10 divide-y divide-border-base border-y border-border-base">
