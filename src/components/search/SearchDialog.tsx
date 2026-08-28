@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { lockScroll } from "@/lib/browser";
 import type { Locale } from "@/lib/i18n";
@@ -53,6 +54,7 @@ export function SearchDialog({ locale, entries, labels }: Props) {
   const [active, setActive] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
 
   const openDialog = useCallback(() => {
@@ -82,11 +84,16 @@ export function SearchDialog({ locale, entries, labels }: Props) {
 
   useEffect(() => {
     if (!open) return;
+    // The trigger outlives the dialog, so capturing it here is safe and keeps
+    // the cleanup from reading a ref that may have moved on.
+    const trigger = triggerRef.current;
     const id = requestAnimationFrame(() => inputRef.current?.focus());
     lockScroll(true);
     return () => {
       cancelAnimationFrame(id);
       lockScroll(false);
+      // Send focus back where it came from instead of dropping it on <body>.
+      trigger?.focus();
     };
   }, [open]);
 
@@ -123,6 +130,7 @@ export function SearchDialog({ locale, entries, labels }: Props) {
   return (
     <>
       <button
+        ref={triggerRef}
         type="button"
         onClick={openDialog}
         className="group flex h-9 items-center gap-2 rounded-lg border border-border-base bg-surface pl-2.5 pr-2 text-sm text-fg-subtle transition-colors hover:border-border-strong hover:text-fg-muted sm:w-64 lg:w-72"
@@ -134,20 +142,28 @@ export function SearchDialog({ locale, entries, labels }: Props) {
         </kbd>
       </button>
 
-      {open && (
-        <div
-          className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-[8vh] sm:pt-[12vh]"
-          role="dialog"
-          aria-modal="true"
-          aria-label={labels.search}
-        >
-          <button
-            type="button"
-            aria-label={labels.close}
-            onClick={() => setOpen(false)}
-            className="ew-fade absolute inset-0 cursor-default bg-black/35 backdrop-blur-[2px]"
-            style={{ animationDuration: "0.15s" }}
-          />
+      {/* Portalled to <body>. The header carries backdrop-blur, and a
+          backdrop-filter makes an element the containing block for fixed
+          descendants — inside the header this dialog resolved inset-0 against
+          the 56 px header instead of the viewport, so the dimmer rendered as a
+          band across the top of the page. */}
+      {open &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-[8vh] sm:pt-[12vh]"
+            role="dialog"
+            aria-modal="true"
+            aria-label={labels.search}
+          >
+            {/* Decorative dimmer. Click-to-close is a convenience; Esc and the
+                visible esc button are the accessible ways out, so this must not
+                be a tab stop announcing itself as "Schließen". */}
+            <div
+              aria-hidden
+              onClick={() => setOpen(false)}
+              className="ew-fade absolute inset-0 bg-black/40"
+              style={{ animationDuration: "0.15s" }}
+            />
           <div className="ew-rise relative flex max-h-[70vh] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-border-base bg-surface shadow-[var(--shadow-md)]">
             <div className="flex items-center gap-3 border-b border-border-base px-4">
               <span className="text-fg-subtle">
@@ -218,9 +234,10 @@ export function SearchDialog({ locale, entries, labels }: Props) {
                 {results.length} {labels.results} · ↑↓ ⏎
               </p>
             )}
-          </div>
-        </div>
-      )}
+            </div>
+          </div>,
+          document.body,
+        )}
     </>
   );
 }

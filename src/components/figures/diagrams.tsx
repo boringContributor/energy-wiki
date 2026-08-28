@@ -623,17 +623,22 @@ export function Netzebenen() {
     >
       <ul className="space-y-1.5">
         {LEVELS.map((level, i) => (
-          <li key={level.name} className="flex items-center gap-3">
-            <span
-              className="h-8 shrink-0 rounded-md transition-all"
-              style={{
-                width: `${level.w}%`,
-                background: `color-mix(in srgb, var(--markt) ${8 + i * 4}%, transparent)`,
-                borderLeft: "3px solid var(--markt)",
-              }}
-            />
+          <li key={level.name} className="flex items-center gap-4">
+            {/* The bar scales inside a fixed track. Sizing the bar itself off
+                the row let the 100 % level claim the whole width and squeeze
+                the label out of the layout entirely. */}
+            <span className="w-[34%] max-w-[12rem] shrink-0">
+              <span
+                className="block h-8 rounded-md"
+                style={{
+                  width: `${level.w}%`,
+                  background: `color-mix(in srgb, var(--markt) ${8 + i * 4}%, transparent)`,
+                  borderLeft: "3px solid var(--markt)",
+                }}
+              />
+            </span>
             <span className="min-w-0 flex-1">
-              <span className="block text-sm font-medium text-fg">
+              <span className="block text-sm font-medium leading-snug text-fg">
                 {level.name}
                 {level.volt && (
                   <span className="ml-2 font-mono text-xs text-fg-subtle">
@@ -641,7 +646,9 @@ export function Netzebenen() {
                   </span>
                 )}
               </span>
-              <span className="block text-xs text-fg-subtle">{level.who}</span>
+              <span className="mt-0.5 block text-xs leading-5 text-fg-subtle">
+                {level.who}
+              </span>
             </span>
           </li>
         ))}
