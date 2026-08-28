@@ -22,6 +22,7 @@ import {
 import {
   AnlagenUebersicht,
   Blindleistung,
+  FormatwechselZyklus,
   Heizungsvergleich,
   Lieferantenwechsel,
   MaloMelo,
@@ -67,6 +68,7 @@ export const figures = {
   "waermepumpe-rechner": WaermepumpeRechner,
   "waermepumpen-typen": WaermepumpenTypen,
   heizungsvergleich: Heizungsvergleich,
+  "formatwechsel-zyklus": FormatwechselZyklus,
 } as const;
 
 export type FigureId = keyof typeof figures;

@@ -112,7 +112,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
                 label={s("topics", l)}
               />
               <Stat
-                value="27"
+                value="28"
                 label={l === "de" ? "Interaktive Grafiken" : "Interactive figures"}
               />
             </dl>

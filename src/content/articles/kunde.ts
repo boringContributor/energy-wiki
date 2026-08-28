@@ -105,11 +105,17 @@ export const kundeArticles: Article[] = [
         {
           t: "note",
           kind: "law",
-          text: "Seit dem 6. Juni 2025 gilt die Vorgabe, dass ein Lieferantenwechsel innerhalb von **24 Stunden** technisch möglich sein muss. Der Prozess selbst ist in der Festlegung GPKE (Strom) beziehungsweise GeLi Gas geregelt.",
+          text: "Seit dem 6. Juni 2025 gilt die Vorgabe, dass ein Lieferantenwechsel innerhalb von **24 Stunden** technisch möglich sein muss. Ursprünglich sollte die Regel zum 4. April 2025 greifen; die Bundesnetzagentur verschob den Stichtag, weil ein Großteil der Versorger die Umstellung nicht rechtzeitig schaffte – siehe [[formatanpassung|Formatanpassung]]. Der Prozess selbst ist in der Festlegung GPKE (Strom) beziehungsweise GeLi Gas geregelt.",
         },
       ],
     },
-    related: ["marktkommunikation", "marktlokation", "ersatzversorgung", "umzug"],
+    related: [
+      "marktkommunikation",
+      "marktlokation",
+      "formatanpassung",
+      "ersatzversorgung",
+      "umzug",
+    ],
   },
 
   {

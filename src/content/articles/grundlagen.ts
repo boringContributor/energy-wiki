@@ -319,7 +319,7 @@ export const grundlagenArticles: Article[] = [
       de: [
         {
           t: "lead",
-          text: "Weil kein Marktteilnehmer alle Daten besitzt, tauschen alle ständig Nachrichten aus. Format, Inhalt und Fristen sind bis ins Detail festgelegt – von der Bundesnetzagentur in den Festlegungen **GPKE** (Strom) und **GeLi Gas** (Gas).",
+          text: "Weil kein Marktteilnehmer alle Daten besitzt, tauschen alle ständig Nachrichten aus. Format, Inhalt und Fristen sind bis ins Detail festgelegt – von der Bundesnetzagentur in Festlegungen wie **GPKE** (Lieferantenwechsel Strom), **MaBiS** (Bilanzkreisabrechnung), **WiM** (Messwesen), **MPES** (Erzeugungsanlagen) und **GeLi Gas** (Gas). Diese Festlegungen werden zweimal im Jahr überarbeitet – siehe [[formatanpassung|Formatanpassung]].",
         },
         { t: "h", level: 2, text: "Die wichtigsten Nachrichtentypen" },
         {
@@ -349,7 +349,116 @@ export const grundlagenArticles: Article[] = [
         },
       ],
     },
-    related: ["lieferantenwechsel", "bilanzkreis", "marktlokation", "marktrollen"],
+    related: [
+      "formatanpassung",
+      "lieferantenwechsel",
+      "bilanzkreis",
+      "marktlokation",
+      "marktrollen",
+    ],
+  },
+
+  {
+    slug: "formatanpassung",
+    category: "grundlagen",
+    updated: "2026-08-28",
+    aka: ["FoMa", "Formatwechsel", "Formatumstellung", "FUM", "EDI@Energy", "MaKo-Update", "Codeliste", "Stichtag", "BNetzA-Mitteilung"],
+    title: {
+      de: "Formatanpassung (FoMa)",
+      en: "Format change",
+    },
+    summary: {
+      de: "Zweimal im Jahr – zum 1. April und zum 1. Oktober – stellt der deutsche Energiemarkt seine Kommunikationsformate um. Ohne Übergangszeitraum: Wer nicht umgestellt hat, kann nicht mehr mit dem Markt kommunizieren.",
+      en: "Twice a year – on 1 April and 1 October – the German energy market switches its communication formats. With no transition period: anyone who has not migrated can no longer talk to the market.",
+    },
+    body: {
+      de: [
+        {
+          t: "lead",
+          text: "Die Formate der [[marktkommunikation|Marktkommunikation]] sind nicht auf Dauer gesetzt. Die Bundesnetzagentur legt sie verbindlich fest und tauscht sie **zweimal im Jahr** aus. Um Mitternacht des Stichtags verlieren die alten Versionen ihre Gültigkeit – es gibt keine Übergangsfrist und keine Kulanz.",
+        },
+        { t: "figure", id: "formatwechsel-zyklus" },
+        { t: "h", level: 2, text: "Was umgestellt wird" },
+        {
+          t: "p",
+          text: "Betroffen sind die energiewirtschaftlichen Kernprozesse – nicht nur die Nachrichtenformate selbst, sondern auch die Entscheidungsbäume, Codelisten und Fristen dahinter:",
+        },
+        {
+          t: "table",
+          head: ["Kürzel", "Prozess"],
+          rows: [
+            ["**GPKE**", "Geschäftsprozesse zur Kundenbelieferung mit Elektrizität – der [[lieferantenwechsel|Lieferantenwechsel]] Strom"],
+            ["**MaBiS**", "Marktregeln für die Bilanzkreisabrechnung Strom – siehe [[bilanzkreis|Bilanzkreis]]"],
+            ["**WiM**", "Wechselprozesse im Messwesen – Wechsel des [[messstellenbetrieb|Messstellenbetreibers]]"],
+            ["**MPES**", "Marktprozesse für erzeugende Marktlokationen Strom – Einspeiser, siehe [[photovoltaik|PV-Anlagen]]"],
+          ],
+          caption:
+            "Für Gas gelten die Schwesterprozesse GeLi Gas und GaBi Gas mit demselben Rhythmus.",
+        },
+        { t: "h", level: 2, text: "Der Zyklus" },
+        {
+          t: "steps",
+          items: [
+            { title: "Konsultation", text: "Die Projektgruppe EDI@Energy legt der Bundesnetzagentur überarbeitete Nachrichtenversionen im Entwurf vor. Rund acht Monate vor dem Stichtag können alle Marktteilnehmer Stellung nehmen." },
+            { title: "Festlegung", text: "Etwa sechs Monate vor dem Stichtag veröffentlicht die Bundesnetzagentur die finalen Versionen in einer nummerierten **Mitteilung zu den Datenformaten**." },
+            { title: "Umsetzung", text: "In diesen sechs Monaten muss der Softwarehersteller entwickeln und ausliefern und der Versorger einbauen, testen und schulen. Das ist das gesamte Fenster." },
+            { title: "Stichtag", text: "Am 1. April beziehungsweise 1. Oktober sind die neuen Versionen für alle Marktteilnehmer verbindlich. Die alten gelten ab diesem Moment nicht mehr." },
+          ],
+        },
+        {
+          t: "note",
+          kind: "info",
+          text: "Rund 800 Energieversorger in Deutschland durchlaufen diesen Zyklus zweimal jährlich. Der aktuelle Stand steht immer in der jeweils neuesten [Mitteilung der Bundesnetzagentur](https://www.bundesnetzagentur.de/DE/Beschlusskammern/BK06/BK6_83_Zug_Mess/835_mitteilungen_datenformate/Datenformate-node.html); die Dokumente selbst liegen auf der MaKo-Plattform des BDEW.",
+        },
+        { t: "h", level: 2, text: "Warum das kein Software-Update ist" },
+        {
+          t: "p",
+          text: "Der häufigste Denkfehler: „Da kommt doch ein Patch vom Hersteller.“ Der Patch ist der einfache Teil. Die eigentliche Arbeit sind die **prozessualen** Änderungen drumherum – geänderte Entscheidungsbäume, neue Pflichtfelder, angepasste Klärfälle, veränderte Fristen – und der Testaufwand:",
+        },
+        {
+          t: "ul",
+          items: [
+            "Regressions-, Last- und Sicherheitstests",
+            "Cut-over-Tests und Schulung der Fachbereiche",
+            "**Tests mit Marktpartnern** – Marktkommunikation ist bilateral, also muss über Unternehmensgrenzen hinweg abgestimmt werden",
+          ],
+        },
+        {
+          t: "note",
+          kind: "warn",
+          text: "EDIFACT, AS4 und die neueren JSON-APIs **koexistieren**. Die APIs lösen EDIFACT nicht ab. Betroffene Systeme müssen beide Welten parallel unterstützen und synchron halten – ein Formatwechsel trifft damit oft mehrere Systeme gleichzeitig.",
+        },
+        { t: "h", level: 2, text: "Wenn der Stichtag nicht hält: LFW24" },
+        {
+          t: "p",
+          text: "Der 24-Stunden-[[lieferantenwechsel|Lieferantenwechsel]] war der größte Formatwechsel der letzten Jahre und zeigt, was passiert, wenn das Sechs-Monats-Fenster nicht reicht. Die Deutschsprachige SAP-Anwendergruppe (DSAG) erhob dazu öffentlich Zahlen: Der realistische Umsetzungsbedarf nach Auslieferung der Software lag bei rund **37 Wochen**, die Frist gab **26** her. In einer Umfrage unter 160 Energieversorgern gaben **88 %** an, die Umsetzung bis April 2025 nicht schaffen zu können.",
+        },
+        {
+          t: "p",
+          text: "Die Bundesnetzagentur verschob den Stichtag daraufhin vom 4. April auf den **6. Juni 2025**. Gefordert war eine Verschiebung auf den 1. Oktober 2025 – die wurde abgelehnt.",
+        },
+        {
+          t: "note",
+          kind: "praxis",
+          text: "Wer Software für Versorger baut, sollte den Rhythmus kennen: **März/April und September/Oktober** sind bei vielen Häusern Freeze-Fenster. Systeme werden umgestellt, Testdaten verlieren nach dem Freeze ihre Gültigkeit und müssen neu aufgebaut werden, und die Fachleute, die man für Abstimmungen braucht, sind in dieser Zeit gebunden. Go-Lives und Testphasen lassen sich in diesen Wochen planen – aber nur als bewusste Entscheidung, nicht aus Versehen.",
+        },
+      ],
+    },
+    related: ["marktkommunikation", "lieferantenwechsel", "bilanzkreis", "messstellenbetrieb"],
+    sources: [
+      {
+        label: "Bundesnetzagentur – Datenformate zur Abwicklung der Marktkommunikation",
+        url: "https://www.bundesnetzagentur.de/DE/Beschlusskammern/BK06/BK6_83_Zug_Mess/835_mitteilungen_datenformate/Datenformate-node.html",
+      },
+      {
+        label: "BDEW – Marktkommunikation & EDI@Energy-Dokumente",
+        url: "https://www.bdew.de/energie/marktkommunikation-edi-energy-dokumente-/",
+      },
+      {
+        label: "DSAG – Teilerfolg beim 24-h-Lieferantenwechsel (LFW24)",
+        url: "https://impulsant.dsag.de/formate/pressemeldung/teilerfolg-beim-24-h-lieferantenwechsel-lfw24/",
+      },
+    ],
   },
 
   {

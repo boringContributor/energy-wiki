@@ -983,3 +983,84 @@ export function Heizungsvergleich() {
     </Frame>
   );
 }
+
+/* ------------------------------------------------------------------ *
+ * Formatwechsel-Zyklus
+ * ------------------------------------------------------------------ */
+
+const FOMA_STEPS = [
+  { at: 0, label: "Konsultation", sub: "rund 8 Monate vorher", tone: "var(--markt)" },
+  { at: 25, label: "Festlegung", sub: "rund 6 Monate vorher", tone: "var(--gas)" },
+  { at: 92, label: "Stichtag", sub: "1. April oder 1. Oktober", tone: "var(--waerme)" },
+];
+
+export function FormatwechselZyklus() {
+  return (
+    <Frame
+      title="Ein Formatwechsel von der Konsultation bis zum Stichtag"
+      hint="Zweimal im Jahr, immer nach demselben Muster"
+      footer="Um Mitternacht des Stichtags verlieren die alten Versionen ihre Gültigkeit – ohne Übergangszeitraum. Wer nicht umgestellt hat, kann nicht mehr mit dem Markt kommunizieren. Die rund sechs Monate zwischen Festlegung und Stichtag sind das gesamte Fenster, in dem Softwarehersteller entwickeln und ausliefern und Versorger einbauen, testen und schulen müssen."
+    >
+      {/* Three milestones sit at 1/6, 1/2 and 5/6 of the width, so the
+          implementation window spans exactly the last two. */}
+      <div className="relative pt-4">
+        <div
+          aria-hidden
+          className="absolute left-1/2 right-[16.6%] top-0 flex h-7 items-center justify-center rounded-md"
+          style={{ background: "var(--accent-soft)" }}
+        >
+          <span className="text-2xs font-semibold uppercase tracking-[0.08em] text-accent">
+            ~6 Monate
+          </span>
+        </div>
+
+        <div className="relative mt-6">
+          <div
+            aria-hidden
+            className="absolute inset-x-[8%] top-1.5 h-px"
+            style={{ background: "var(--border-strong)" }}
+          />
+          <ol className="relative flex">
+            {FOMA_STEPS.map((step) => (
+              <li
+                key={step.label}
+                className="flex min-w-0 flex-1 flex-col items-center"
+              >
+                <span
+                  aria-hidden
+                  className="size-3 rounded-full ring-4"
+                  style={{
+                    background: step.tone,
+                    // @ts-expect-error CSS custom property for the ring colour
+                    "--tw-ring-color": "var(--surface)",
+                  }}
+                />
+                <span className="mt-3 text-center text-sm font-medium leading-snug text-fg">
+                  {step.label}
+                </span>
+                <span className="mt-0.5 text-center text-xs leading-5 text-fg-subtle">
+                  {step.sub}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+
+      <dl className="mt-6 grid gap-3 border-t border-border-base pt-5 @md:grid-cols-3">
+        {[
+          { k: "Betroffene Prozesse", v: "GPKE, MaBiS, WiM, MPES" },
+          { k: "Stichtage", v: "1. April und 1. Oktober" },
+          { k: "Umsetzungsfenster", v: "rund 6 Monate, keine Übergangsfrist" },
+        ].map((f) => (
+          <div key={f.k} className="min-w-0">
+            <dt className="text-2xs uppercase tracking-[0.08em] text-fg-subtle">
+              {f.k}
+            </dt>
+            <dd className="mt-0.5 text-sm font-medium text-fg-muted">{f.v}</dd>
+          </div>
+        ))}
+      </dl>
+    </Frame>
+  );
+}
