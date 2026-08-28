@@ -55,6 +55,11 @@ export default async function LocaleLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
+        {/* Must stay a bare <script>, not next/script: beforeInteractive
+            queues the source on self.__next_s and only runs it once the
+            bundles load, which paints light first and defeats the point.
+            React dev-warns that this never executes on a client re-render —
+            correct, and irrelevant: it only ever needs to run on first paint. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
       </head>
       <body className="flex min-h-full flex-col">
