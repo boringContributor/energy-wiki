@@ -51,6 +51,14 @@ export function Footer({ locale }: { locale: Locale }) {
                   {s("startHere", locale)}
                 </Link>
               </li>
+              <li>
+                <Link
+                  href={`/${locale}/datenschutz`}
+                  className="text-fg-muted transition-colors hover:text-fg"
+                >
+                  {s("privacy", locale)}
+                </Link>
+              </li>
             </FooterGroup>
 
             <FooterGroup title={s("sources", locale)}>

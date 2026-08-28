@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
@@ -72,6 +73,7 @@ export default async function LocaleLayout({
         <Header locale={l} />
         <div className="flex-1">{children}</div>
         <Footer locale={l} />
+        <Analytics />
       </body>
     </html>
   );

@@ -91,6 +91,7 @@ export const ui = {
   noArticles: { de: "Noch keine Artikel.", en: "No articles yet." },
   toggleNav: { de: "Navigation", en: "Navigation" },
   jumpTo: { de: "Springe zu", en: "Jump to" },
+  privacy: { de: "Datenschutz", en: "Privacy" },
 } satisfies Dict;
 
 export function s(key: keyof typeof ui, locale: Locale): string {
