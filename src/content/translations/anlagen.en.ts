@@ -12,7 +12,7 @@ export const anlagenEn: Record<string, Block[]> = {
       t: "table",
       head: ["Device", "Consequence for meter and contract"],
       rows: [
-        ["[[photovoltaik|PV system]]", "[[zaehlertypen|bidirectional meter]], usually two [[marktlokation|market locations]], [[einspeiseverguetung|feed-in tariff]], and from 2 kW an iMSys plus control box"],
+        ["[[photovoltaik|PV system]]", "[[zaehlertypen|bidirectional meter]], usually two [[marktlokation|market locations]], [[einspeiseverguetung|feed-in tariff]]; from 2 kW, feed-in is capped at 60 % without an iMSys and control box, while mandatory iMSys installation only starts above 7 kW"],
         ["[[waermepumpe|Heat pump]]", "above 4.2 kW it falls under [[paragraf-14a-enwg|§ 14a EnWG]]; its own heating-power tariff, often a second register"],
         ["[[batteriespeicher|Home battery]]", "shifts consumption into other hours and changes the [[lastprofil|load profile]]"],
         ["[[wallbox|Wallbox]]", "above 4.2 kW § 14a applies; registration with the grid operator, approval required above 12 kW"],
@@ -59,7 +59,7 @@ export const anlagenEn: Record<string, Block[]> = {
     {
       t: "note",
       kind: "law",
-      text: "**Solarspitzengesetz**: new systems from 2 kW commissioned on or after 25 February 2025 need an [[intelligentes-messsystem|intelligent metering system]] and a control box. Without both, feed-in capacity is capped at **60 %**. During hours with negative exchange prices the feed-in tariff is not paid; that time is added to the end of the 20 years in quarter-hour increments. Existing systems are not affected.",
+      text: "**Solarspitzengesetz**: for new systems from 2 kW commissioned on or after 25 February 2025, feed-in is capped at **60 %** of installed capacity for as long as no [[intelligentes-messsystem|intelligent metering system]] with a control box is installed – once it is, the cap falls away. There is no installation obligation from 2 kW; mandatory installation under § 29 [[msbg|MsbG]] still starts above 7 kW. In addition, new systems receive no tariff in quarter hours with negative exchange prices; that time is appended to the end of the 20-year remuneration period. Existing systems are not affected.",
     },
     { t: "h", level: 2, text: "Meters and market locations" },
     {
@@ -91,6 +91,8 @@ export const anlagenEn: Record<string, Block[]> = {
         { term: "2,000 Wp of modules", def: "Installed module capacity may be up to 2,000 Wp, as long as the inverter is limited to 800 W." },
         { term: "MaStR only", def: "Registration with the [[netzbetreiber|grid operator]] is no longer required. Registering in the [[marktstammdatenregister|Marktstammdatenregister]] within one month of commissioning is enough – a handful of fields, around 15 minutes." },
         { term: "Meter", def: "A meter running backwards is tolerated on a transitional basis until the grid operator replaces it. After that a [[zaehlertypen|bidirectional meter]] counts." },
+        { term: "Schuko plug", def: "Connecting through an ordinary earthed household socket is permitted: the VDE product standard for plug-in solar devices and VDE-AR-N 4105 accept the Schuko plug, so a special energy socket is no longer a prerequisite." },
+        { term: "Tenants and owners' associations", def: "Since 2024 a plug-in solar device counts as a **privilegierte Maßnahme** (privileged alteration): tenants are entitled to permission under § 554 BGB, and in a WEG a simple majority resolution on the how is enough under § 20 WEG – the association can no longer refuse the whether." },
       ],
     },
     {
@@ -120,7 +122,19 @@ export const anlagenEn: Record<string, Block[]> = {
         ["Full feed-in", "The entire output goes to the grid, no self-consumption", "12.22 ct/kWh"],
       ],
       caption:
-        "Rates fall in steps for larger roof systems – to 6.66 and 10.24 ct/kWh up to 40 kW, and 5.44 and 10.24 ct/kWh up to 100 kW.",
+        "Rates fall in steps for larger roof systems – to 6.67 and 10.23 ct/kWh up to 40 kW, and 5.44 and 10.23 ct/kWh up to 100 kW (for the share of the system in each band).",
+    },
+    {
+      t: "table",
+      head: ["Commissioned", "Surplus (up to 10 kW)", "Full feed-in (up to 10 kW)"],
+      align: ["l", "r", "r"],
+      rows: [
+        ["Feb – Jul 2025", "7.94 ct/kWh", "12.60 ct/kWh"],
+        ["Aug 2025 – Jan 2026", "7.86 ct/kWh", "12.47 ct/kWh"],
+        ["Feb – Jul 2026", "7.78 ct/kWh", "12.35 ct/kWh"],
+        ["from Aug 2026", "7.70 ct/kWh", "12.22 ct/kWh"],
+      ],
+      caption: "Each step is one percent below the previous one; the Bundesnetzagentur publishes the values to two decimal places, so a deviation in the last digit from your own calculation is normal.",
     },
     {
       t: "note",
@@ -130,7 +144,7 @@ export const anlagenEn: Record<string, Block[]> = {
     { t: "h", level: 2, text: "Degression" },
     {
       t: "p",
-      text: "Since 2024 the rate falls **by one percent every six months** rather than monthly. What counts is the rate on the day of commissioning – one reason why installation dates at the end of a month regularly become a point of contention.",
+      text: "Since 2024 the rate falls **by one percent every six months** rather than monthly – the steps take effect on **1 February** and **1 August**. What counts is the rate on the day of commissioning; one reason why installation dates at the end of January and the end of July regularly become a point of contention.",
     },
     { t: "h", level: 2, text: "When the power is worth nothing" },
     {
@@ -213,7 +227,7 @@ export const anlagenEn: Record<string, Block[]> = {
     { t: "h", level: 2, text: "Tariff and grid fee" },
     {
       t: "p",
-      text: "Heat pumps above 4.2 kW fall under [[paragraf-14a-enwg|§ 14a EnWG]]: the grid operator may curtail them to 4.2 kW in an emergency, and in exchange the [[netzentgelte|grid fees]] are reduced. With a separate meter, heat pump tariffs in 2026 run at roughly 21 to 26 ct/kWh instead of the 33 to 40 ct/kWh of a household tariff.",
+      text: "Heat pumps above 4.2 kW fall under [[paragraf-14a-enwg|§ 14a EnWG]]: the grid operator may curtail them to 4.2 kW in an emergency, and in exchange the [[netzentgelte|grid fees]] are reduced – either as **Modul 1** (a flat reduction), **Modul 2** (a percentage reduction of the Arbeitspreis, the unit rate, which requires a separate metering point) or, since 1 April 2025, additionally **Modul 3** (a time-variable grid fee, only in combination with Modul 1). With a separate meter, heat pump tariffs in 2026 run at roughly 21 to 26 ct/kWh instead of the 33 to 40 ct/kWh of a household tariff.",
     },
     {
       t: "note",
@@ -331,8 +345,8 @@ export const anlagenEn: Record<string, Block[]> = {
     {
       t: "ul",
       items: [
-        "A **KWK bonus** under the KWKG for every kilowatt-hour generated, staggered by capacity",
-        "**Avoided grid usage fees** and the usual power price for electricity fed in",
+        "A **KWK-Zuschlag** (CHP bonus) under the KWKG for every kilowatt-hour **fed in**, staggered by capacity; for self-consumed power it is only paid to small units up to 100 kW, and at a reduced rate",
+        "The usual power price for electricity fed in; **vermiedene Netznutzungsentgelte** (avoided grid usage fees) now go only to existing units – for units commissioned from 2023 they were abolished under § 18 StromNEV",
         "**Energy tax relief** on the gas used, under certain conditions",
         "Electricity used on site saves the full retail price – the strongest lever, as with [[photovoltaik|PV]]",
       ],
@@ -373,7 +387,7 @@ export const anlagenEn: Record<string, Block[]> = {
     { t: "h", level: 2, text: "§ 14a and tariffs" },
     {
       t: "p",
-      text: "As a controllable device above 4.2 kW, a wallbox falls under [[paragraf-14a-enwg|§ 14a EnWG]]. The grid operator may curtail it to 4.2 kW during congestion – enough for around 20 kilometres of range per hour. In exchange the [[netzentgelte|grid fees]] are reduced, either as a flat deduction or as a lowered unit rate depending on the module chosen.",
+      text: "As a controllable device above 4.2 kW, a wallbox falls under [[paragraf-14a-enwg|§ 14a EnWG]]. The grid operator may curtail it to 4.2 kW during congestion – enough for around 20 kilometres of range per hour. In exchange the [[netzentgelte|grid fees]] are reduced in three modules: **Modul 1** is a flat reduction of the grid fee, **Modul 2** a percentage reduction of the Arbeitspreis (unit rate) via a separate metering point, and since 1 April 2025 **Modul 3** – a time-variable grid fee with cheap time windows – can be chosen on top of Modul 1.",
     },
     {
       t: "note",
@@ -427,6 +441,7 @@ export const anlagenEn: Record<string, Block[]> = {
         "Every [[batteriespeicher|home battery]]",
         "Deadline: **within one month** of commissioning",
         "Changes – extension, decommissioning, change of operator – also within one month",
+        "The **operator** itself, as a market actor in its own right – registering the person or company is a separate step before registering the unit",
       ],
     },
     {
@@ -438,6 +453,180 @@ export const anlagenEn: Record<string, Block[]> = {
     {
       t: "p",
       text: "The **MaStR number** identifies an installation uniquely, much as the [[marktlokation|MaLo ID]] identifies a withdrawal point. It appears in remuneration processes and in data exchange, and therefore belongs in any data model that represents generating installations. The register is also publicly searchable – useful for plausibility checks.",
+    },
+    {
+      t: "table",
+      head: ["Prefix", "Object"],
+      rows: [
+        ["`SEE`", "Electricity generating unit, such as a PV system or a CHP unit"],
+        ["`SGE`", "Gas generating unit"],
+        ["`SSE`", "Electricity storage unit, i.e. a [[batteriespeicher|home battery]]"],
+        ["`ABR`", "Anlagenbetreiber – the operator, a person or company rather than the unit"],
+      ],
+      caption: "Structure of the MaStR number: a three-letter prefix followed by twelve digits.",
+    },
+    {
+      t: "p",
+      text: "For connecting your own systems, the register offers a **full data export** as a CSV/XML download and a public web interface. That lets installation data captured during onboarding be checked automatically against the official entry instead of being retyped.",
+    },
+  ],
+
+  netzanschluss: [
+    {
+      t: "lead",
+      text: "Before a meter hangs, a tariff applies or a PV system feeds in, there has to be a grid connection. It is a legal relationship in its own right, with its own contracting parties, its own costs and – for generating installations – its own registration process with statutory deadlines.",
+    },
+    { t: "h", level: 2, text: "Two legal relationships, two people" },
+    {
+      t: "p",
+      text: "The **Niederspannungsanschlussverordnung (NAV)**, the low-voltage connection ordinance, separates the connection itself from its use. That is why, in a rented building, the owner and the tenant have different contracts with the [[netzbetreiber|grid operator]] – without either of them ever having signed one.",
+    },
+    {
+      t: "table",
+      head: ["", "Netzanschlussverhältnis (connection relationship)", "Anschlussnutzungsverhältnis (connection-use relationship)"],
+      rows: [
+        ["Contracting party", "**Anschlussnehmer** (connection owner) – normally the property owner", "**Anschlussnutzer** (connection user) – whoever actually uses the connection to draw power, so the tenant too"],
+        ["Subject matter", "Construction, operation, modification and maintenance of the house connection", "The right to draw electricity through the connection, or to feed in"],
+        ["How it arises", "Grid connection contract, usually with the building application", "Implicitly, by drawing power (§ 3 NAV)"],
+        ["Costs", "House connection costs and Baukostenzuschuss", "None of its own – grid fees flow through the supplier"],
+        ["End", "Dismantling or change of owner", "Moving out"],
+      ],
+    },
+    {
+      t: "p",
+      text: "The connection user is also the contracting party of the [[messstellenbetrieb|metering point operator]] and the person the [[energieliefervertrag|supply contract]] addresses – see [[letztverbraucher|customer types]].",
+    },
+    { t: "h", level: 2, text: "What the connection costs" },
+    {
+      t: "dl",
+      items: [
+        { term: "House connection costs (§ 9 NAV)", def: "The actual cost of building or modifying the connection from the street main to the house connection box. The grid operator may charge them – by effort or as a flat rate." },
+        { term: "Baukostenzuschuss (§ 11 NAV)", def: "A construction cost contribution towards the upstream grid, sized by the capacity reserved. For standard house connections up to 30 kW of demand many grid operators charge no BKZ; above that it becomes relevant, e.g. heat pump plus wallbox, or commercial sites." },
+        { term: "Netzverträglichkeitsprüfung", def: "Before consenting, the grid operator checks whether the line and the local substation can carry the additional load or feed-in. For generating installations this grid compatibility check is the core of the answer to the connection request; it may result in a different connection point or in grid reinforcement." },
+      ],
+    },
+    { t: "h", level: 2, text: "Generating installations: the connection request under § 8 EEG" },
+    {
+      t: "p",
+      text: "For [[photovoltaik|PV systems]], [[bhkw|CHP units]] and other EEG installations the operator has a **right to be connected**: the grid operator must connect the installation without delay and with priority at the point that is most favourable by voltage level and distance (§ 8 Abs. 1 EEG). In practice the process runs through the distribution grid operator's portal.",
+    },
+    {
+      t: "steps",
+      items: [
+        { title: "Submit the connection request", text: "The installer or operator submits location, capacity, inverter and battery data and the desired metering concept – usually in the DSO portal." },
+        { title: "Grid operator's reply", text: "It must send the applicant a schedule for processing **without delay, and at the latest eight weeks** after receipt, and provide the necessary information (§ 8 Abs. 5 and 6 EEG). The result is the connection consent with the connection point." },
+        { title: "Installation and commissioning", text: "An electrical contractor entered in the grid operator's **Installateurverzeichnis** (installer register, § 13 NAV) builds the installation, commissions it and produces the **Inbetriebsetzungsprotokoll** (commissioning report) under VDE-AR-N 4105." },
+        { title: "Meter installation", text: "The metering point operator swaps to a [[zaehlertypen|bidirectional meter]]; from 7 kW an [[intelligentes-messsystem|intelligent metering system]] is mandatory." },
+        { title: "Registration in the MaStR", text: "Within one month of commissioning in the [[marktstammdatenregister|Marktstammdatenregister]] – no entry, no [[einspeiseverguetung|feed-in tariff]]." },
+      ],
+    },
+    {
+      t: "note",
+      kind: "law",
+      text: "**Deemed consent for small installations**: if the grid operator does not respond to a complete connection request for an installation up to **30 kW** within **one month**, the connection at the connection point of the existing house connection is deemed granted (§ 8 Abs. 5 EEG as amended by Solarpaket I, since May 2024; previously the rule applied to installations up to 10.8 kW). For [[balkonkraftwerk|plug-in solar devices]] registration with the grid operator is dropped entirely.",
+    },
+    { t: "h", level: 2, text: "Where processes stall" },
+    {
+      t: "ul",
+      items: [
+        "**Incomplete applications**: the one-month period only starts with a complete request – every missing data sheet resets it",
+        "**Grid reinforcement needed**: then the connection slips by months; the operator is entitled to information on scope and schedule",
+        "**Connection owner is not the operator**: for a tenant with PV or for [[mieterstrom|Mieterstrom]] the owner has to consent to the modification of the grid connection",
+        "**Portal diversity**: around 850 distribution grid operators with their own portals and forms; uniform interfaces are only emerging step by step",
+      ],
+    },
+    {
+      t: "note",
+      kind: "praxis",
+      text: "Anyone selling installations or onboarding installers should run the connection process as a **state object** with the milestones request submitted → consent → commissioning → meter installed → MaStR registered. The commissioning date from the report determines the remuneration rate and the MaStR deadline – it belongs in the data model as its own field, separate from the installation date and the meter installation date.",
+    },
+  ],
+
+  eigenverbrauch: [
+    {
+      t: "lead",
+      text: "Every kilowatt-hour consumed on site replaces one that would otherwise have come from the grid at the full retail price. That is why it is not the size of the installation that decides the economics, but the share of the output that stays in the house.",
+    },
+    { t: "h", level: 2, text: "The legal term: Eigenversorgung" },
+    {
+      t: "p",
+      text: "**Eigenversorgung** (self-supply) under § 3 Nr. 19 EEG is the consumption of electricity that a person generates **themselves** in an installation they **operate themselves**, in **direct spatial proximity** and **without passing through a grid**. All four elements must coincide. If one is missing – for instance because the operator of the installation is not the consumer – it is a supply to third parties, as with [[mieterstrom|Mieterstrom]].",
+    },
+    {
+      t: "table",
+      head: ["Charge", "On self-consumption", "Basis"],
+      rows: [
+        ["[[eeg-umlage|EEG levy]]", "does not apply – the levy was set to zero on 1 July 2022 and abolished at the start of 2023; the earlier reduced rate for self-suppliers is history too", "EnFG"],
+        ["[[stromsteuer|Electricity tax]]", "exempt for installations up to **2 MW** where the electricity is consumed in spatial proximity by the operator", "§ 9 Abs. 1 Nr. 3 StromStG"],
+        ["[[netzentgelte|Grid fees]], [[konzessionsabgabe|Konzessionsabgabe]], other levies", "not incurred – they attach to grid withdrawal", "—"],
+        ["[[umsatzsteuer-energie|VAT]]", "practically irrelevant for small installations since the zero rate of 2023", "§ 12 Abs. 3 UStG"],
+      ],
+    },
+    { t: "h", level: 2, text: "Surplus or full feed-in" },
+    {
+      t: "p",
+      text: "Anyone feeding in chooses between two models with different remuneration rates – the current figures are in the article [[einspeiseverguetung|Feed-in tariff]]. The choice applies for a calendar year and can be changed for the following year by notifying the grid operator before 1 December.",
+    },
+    {
+      t: "dl",
+      items: [
+        { term: "Überschusseinspeisung (surplus feed-in)", def: "The power first flows to the consumers in the house; only what is left goes to the grid. The standard for residential buildings." },
+        { term: "Volleinspeisung (full feed-in)", def: "The entire output goes to the grid and the household continues to draw everything from the grid. A higher rate, but no self-consumption – only worthwhile without significant consumption on site." },
+      ],
+    },
+    { t: "h", level: 2, text: "Metering concepts" },
+    {
+      t: "table",
+      head: ["Concept", "Meters", "When"],
+      rows: [
+        ["Surplus feed-in, simple", "one [[zaehlertypen|bidirectional meter]] at the grid connection (import 1.8.0, export 2.8.0)", "Standard case for a detached house; self-consumption is not metered but derived as generation minus feed-in"],
+        ["with generation meter", "an additional meter directly behind the inverter", "when generation has to be evidenced – for the [[kwk-umlage|KWK bonus]], Mieterstrom, electricity tax evidence, or several installations with different rates"],
+        ["Full feed-in", "a dedicated feed-in meter for the installation, separate import meter", "when no self-consumption is intended"],
+        ["Kaskade (cascade)", "meters in series: a summation meter at the grid connection, sub-meters per user or installation", "Apartment buildings, commercial sites with sub-tenants, Mieterstrom"],
+      ],
+      caption: "The grid operator fixes the metering concept as part of the connection request ([[netzanschluss|grid connection]]); the [[marktlokation|Marktlokationen]] for import and export follow from it.",
+    },
+    { t: "h", level: 2, text: "Two ratios that are often confused" },
+    {
+      t: "formula",
+      expr: "Self-consumption ratio = self-consumption / generation · 100 %   ·   Self-sufficiency = self-consumption / total consumption · 100 %",
+      where: [
+        { sym: "Self-consumption ratio (Eigenverbrauchsquote)", desc: "What share of the **generated** electricity stays in the house – the installation's view" },
+        { sym: "Self-sufficiency (Autarkiegrad)", desc: "What share of the **consumed** electricity comes from the own installation – the household's view" },
+      ],
+    },
+    {
+      t: "example",
+      title: "10 kWp on a detached house",
+      lines: [
+        { label: "Generation", value: "9,500 kWh a year" },
+        { label: "Total consumption", value: "4,500 kWh a year" },
+        { label: "Self-consumption ratio", value: "30 % → 2,850 kWh consumed on site" },
+        { label: "Feed-in", value: "9,500 − 2,850 = 6,650 kWh" },
+        { label: "Grid import", value: "4,500 − 2,850 = 1,650 kWh" },
+        { label: "Self-sufficiency", value: "2,850 / 4,500 = 63 %" },
+      ],
+      result: { label: "Savings + revenue", value: "2,850 kWh × 37 ct = €1,054.50 saved, 6,650 kWh × 7.7 ct = €512.05 feed-in remuneration" },
+    },
+    {
+      t: "note",
+      kind: "info",
+      text: "Without a battery the self-consumption ratio in a home is 25 to 35 %, because generation peaks at midday and consumption in the evening. A [[batteriespeicher|battery]], a [[waermepumpe|heat pump]] or a [[wallbox|wallbox]] with [[energiemanagement|energy management]] lift it to 55 to 70 %. Self-sufficiency is always the number quoted in the sales pitch – the self-consumption ratio is the one that drives the economics.",
+    },
+    { t: "h", level: 2, text: "Economics: the rule of thumb" },
+    {
+      t: "p",
+      text: "A kilowatt-hour consumed on site saves the retail price of roughly **35 to 40 ct/kWh**; one fed in earns roughly **8 ct/kWh**. A kilowatt-hour of self-consumption is therefore worth about **four and a half to five times** as much as one fed in. Every measure that shifts consumption into the generating hours consequently earns more than any additional module.",
+    },
+    { t: "h", level: 2, text: "Direct marketing" },
+    {
+      t: "p",
+      text: "From **100 kW** of installed capacity the electricity fed in must be sold through **Direktvermarktung** (direct marketing): a direct marketer sells it on the exchange, and the operator receives the **Marktprämie** (market premium) as the difference between the applicable value and the monthly market value. This changes nothing about self-consumption – it remains free of levies and is not marketed. For commercial sites with a large roof, the combination of high self-consumption and direct marketing of the remainder is the norm; see [[grosshandel-beschaffung|wholesale and procurement]].",
+    },
+    {
+      t: "note",
+      kind: "praxis",
+      text: "For billing systems, self-consumption is a **quantity that is not metered** but calculated: generation minus feed-in, or in cascades from the difference between several meters. Anyone displaying or remunerating self-consumption therefore needs both the generation values from the inverter or generation meter and the grid values from the bidirectional meter – and must expect discrepancies between the two sources.",
     },
   ],
 };

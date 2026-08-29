@@ -1,6 +1,7 @@
 import type { Article } from "../types";
 
 const U = "2026-08-01";
+const U2 = "2026-08-29";
 
 export const anlagenArticles: Article[] = [
   {
@@ -8,7 +9,7 @@ export const anlagenArticles: Article[] = [
     category: "anlagen",
     featured: true,
     level: "basis",
-    updated: U,
+    updated: U2,
     aka: ["Prosumer", "Kundenanlage", "Anlagen hinter dem Zähler", "Behind the meter", "Eigenerzeugung"],
     title: {
       de: "Anlagen hinter dem Zähler",
@@ -30,7 +31,7 @@ export const anlagenArticles: Article[] = [
           t: "table",
           head: ["Anlage", "Folge für Zähler und Vertrag"],
           rows: [
-            ["[[photovoltaik|PV-Anlage]]", "[[zaehlertypen|Zweirichtungszähler]], meist zwei [[marktlokation|Marktlokationen]], [[einspeiseverguetung|Einspeisevergütung]], ab 2 kW iMSys und Steuerbox"],
+            ["[[photovoltaik|PV-Anlage]]", "[[zaehlertypen|Zweirichtungszähler]], meist zwei [[marktlokation|Marktlokationen]], [[einspeiseverguetung|Einspeisevergütung]]; ab 2 kW ohne iMSys und Steuerbox auf 60 % Einspeiseleistung begrenzt, iMSys-Pflichteinbau erst über 7 kW"],
             ["[[waermepumpe|Wärmepumpe]]", "über 4,2 kW [[paragraf-14a-enwg|§ 14a EnWG]], eigener Heizstromtarif, oft zweites Zählwerk"],
             ["[[batteriespeicher|Batteriespeicher]]", "verschiebt den Verbrauch in andere Stunden, verändert das [[lastprofil|Lastprofil]]"],
             ["[[wallbox|Wallbox]]", "über 4,2 kW § 14a, Anmeldung beim Netzbetreiber ab 12 kW genehmigungspflichtig"],
@@ -55,13 +56,18 @@ export const anlagenArticles: Article[] = [
       ],
     },
     related: ["photovoltaik", "waermepumpe", "marktstammdatenregister", "paragraf-14a-enwg"],
+    sources: [
+      { label: "§ 29 MsbG – Ausstattung von Messstellen mit intelligenten Messsystemen", url: "https://www.gesetze-im-internet.de/messbg/__29.html" },
+      { label: "§ 14a EnWG – Netzorientierte Steuerung steuerbarer Verbrauchseinrichtungen", url: "https://www.gesetze-im-internet.de/enwg_2005/__14a.html" },
+      { label: "Marktstammdatenregister der Bundesnetzagentur", url: "https://www.marktstammdatenregister.de/MaStR" },
+    ],
   },
 
   {
     slug: "photovoltaik",
     category: "anlagen",
     featured: true,
-    updated: U,
+    updated: U2,
     aka: ["PV", "PV-Anlage", "Solaranlage", "Solar", "kWp", "Eigenverbrauch", "Autarkie", "Solarspitzengesetz"],
     title: { de: "Photovoltaikanlage", en: "Photovoltaic system" },
     summary: {
@@ -92,7 +98,7 @@ export const anlagenArticles: Article[] = [
         {
           t: "note",
           kind: "law",
-          text: "**Solarspitzengesetz**: Neue Anlagen ab 2 kW, die seit dem 25. Februar 2025 in Betrieb gehen, brauchen ein [[intelligentes-messsystem|intelligentes Messsystem]] und eine Steuerbox. Ohne beides ist die Einspeiseleistung auf **60 %** begrenzt. In Stunden mit negativen Börsenpreisen entfällt die Einspeisevergütung; diese Zeit wird viertelstundengenau hinten an die 20 Jahre angehängt. Bestandsanlagen sind nicht betroffen.",
+          text: "**Solarspitzengesetz**: Für neue Anlagen ab 2 kW, die seit dem 25. Februar 2025 in Betrieb gehen, ist die Einspeiseleistung auf **60 %** der installierten Leistung begrenzt, solange kein [[intelligentes-messsystem|intelligentes Messsystem]] mit Steuerbox eingebaut ist – danach entfällt die Kappung. Eine Einbaupflicht ab 2 kW gibt es nicht; der Pflichteinbau nach § 29 [[msbg|MsbG]] beginnt weiterhin über 7 kW. Außerdem entfällt für Neuanlagen die Vergütung in Viertelstunden mit negativen Börsenpreisen; diese Zeit wird hinten an die 20 Jahre Vergütungsdauer angehängt. Bestandsanlagen sind nicht betroffen.",
         },
         { t: "h", level: 2, text: "Zähler und Marktlokationen" },
         {
@@ -111,19 +117,18 @@ export const anlagenArticles: Article[] = [
         },
       ],
     },
-    related: ["einspeiseverguetung", "batteriespeicher", "balkonkraftwerk", "marktstammdatenregister"],
+    related: ["einspeiseverguetung", "eigenverbrauch", "netzanschluss", "batteriespeicher", "balkonkraftwerk", "marktstammdatenregister"],
     sources: [
-      {
-        label: "Bundesnetzagentur – Marktstammdatenregister",
-        url: "https://www.marktstammdatenregister.de/MaStR",
-      },
+      { label: "Bundesnetzagentur – Marktstammdatenregister", url: "https://www.marktstammdatenregister.de/MaStR" },
+      { label: "§ 29 MsbG – Ausstattung von Messstellen mit intelligenten Messsystemen", url: "https://www.gesetze-im-internet.de/messbg/__29.html" },
+      { label: "EEG 2023 (Gesetz für den Ausbau erneuerbarer Energien)", url: "https://www.gesetze-im-internet.de/eeg_2014/" },
     ],
   },
 
   {
     slug: "balkonkraftwerk",
     category: "anlagen",
-    updated: U,
+    updated: U2,
     aka: ["Steckersolargerät", "Mini-PV", "Balkon-PV", "800 Watt", "Steckersolar"],
     title: { de: "Balkonkraftwerk (Steckersolargerät)", en: "Plug-in solar device" },
     summary: {
@@ -144,6 +149,8 @@ export const anlagenArticles: Article[] = [
             { term: "2.000 Wp Module", def: "Die installierte Modulleistung darf bis zu 2.000 Wp betragen, solange der Wechselrichter auf 800 W begrenzt ist." },
             { term: "Nur MaStR", def: "Die Anmeldung beim [[netzbetreiber|Netzbetreiber]] entfällt. Es genügt die Registrierung im [[marktstammdatenregister|Marktstammdatenregister]] innerhalb eines Monats nach Inbetriebnahme – wenige Angaben, rund 15 Minuten." },
             { term: "Zähler", def: "Ein rückwärtslaufender Zähler wird übergangsweise geduldet, bis der Netzbetreiber tauscht. Danach zählt der [[zaehlertypen|Zweirichtungszähler]]." },
+            { term: "Schuko-Stecker", def: "Der Anschluss über eine normale Schutzkontakt-Steckdose ist zulässig: Die VDE-Produktnorm für Steckersolargeräte und die VDE-AR-N 4105 akzeptieren den Schuko-Stecker, eine spezielle Energiesteckdose ist nicht mehr Voraussetzung." },
+            { term: "Mieter und Eigentümergemeinschaften", def: "Seit 2024 ist das Steckersolargerät eine **privilegierte Maßnahme**: Mieter haben nach § 554 BGB einen Anspruch auf Erlaubnis, in der WEG genügt nach § 20 WEG ein einfacher Beschluss über das Wie – das Ob kann die Gemeinschaft nicht mehr verweigern." },
           ],
         },
         {
@@ -159,12 +166,17 @@ export const anlagenArticles: Article[] = [
       ],
     },
     related: ["photovoltaik", "marktstammdatenregister", "zaehlertypen", "einspeiseverguetung"],
+    sources: [
+      { label: "§ 554 BGB – Barrierereduzierung, E-Mobilität und Steckersolargeräte", url: "https://www.gesetze-im-internet.de/bgb/__554.html" },
+      { label: "§ 20 WEG – Bauliche Veränderungen", url: "https://www.gesetze-im-internet.de/woeigg/__20.html" },
+      { label: "Marktstammdatenregister der Bundesnetzagentur", url: "https://www.marktstammdatenregister.de/MaStR" },
+    ],
   },
 
   {
     slug: "einspeiseverguetung",
     category: "anlagen",
-    updated: U,
+    updated: U2,
     aka: ["EEG-Vergütung", "Überschusseinspeisung", "Volleinspeisung", "Marktprämie", "Direktvermarktung", "Degression"],
     title: { de: "Einspeisevergütung", en: "Feed-in tariff" },
     summary: {
@@ -187,7 +199,19 @@ export const anlagenArticles: Article[] = [
             ["Volleinspeisung", "Die gesamte Erzeugung geht ins Netz, kein Eigenverbrauch", "12,22 ct/kWh"],
           ],
           caption:
-            "Für größere Dachanlagen sinken die Sätze gestaffelt – bis 40 kW auf 6,66 bzw. 10,24 ct/kWh, bis 100 kW auf 5,44 bzw. 10,24 ct/kWh.",
+            "Für größere Dachanlagen sinken die Sätze gestaffelt – bis 40 kW auf 6,67 bzw. 10,23 ct/kWh, bis 100 kW auf 5,44 bzw. 10,23 ct/kWh (Anlagenteil in der jeweiligen Stufe).",
+        },
+        {
+          t: "table",
+          head: ["Inbetriebnahme", "Überschuss (bis 10 kW)", "Volleinspeisung (bis 10 kW)"],
+          align: ["l", "r", "r"],
+          rows: [
+            ["Feb. – Jul. 2025", "7,94 ct/kWh", "12,60 ct/kWh"],
+            ["Aug. 2025 – Jan. 2026", "7,86 ct/kWh", "12,47 ct/kWh"],
+            ["Feb. – Jul. 2026", "7,78 ct/kWh", "12,35 ct/kWh"],
+            ["ab Aug. 2026", "7,70 ct/kWh", "12,22 ct/kWh"],
+          ],
+          caption: "Jede Stufe liegt ein Prozent unter der vorigen; die Bundesnetzagentur veröffentlicht die auf zwei Nachkommastellen bestimmten Werte, Abweichungen in der letzten Stelle gegenüber der eigenen Rechnung sind normal.",
         },
         {
           t: "note",
@@ -197,7 +221,7 @@ export const anlagenArticles: Article[] = [
         { t: "h", level: 2, text: "Degression" },
         {
           t: "p",
-          text: "Seit 2024 sinkt die Vergütung **halbjährlich um ein Prozent** statt monatlich. Maßgeblich ist der Satz am Tag der Inbetriebnahme – ein Grund, warum Installationstermine am Monatsende regelmäßig zum Streitthema werden.",
+          text: "Seit 2024 sinkt die Vergütung **halbjährlich um ein Prozent** statt monatlich – die Stufen greifen jeweils zum **1. Februar** und zum **1. August**. Maßgeblich ist der Satz am Tag der Inbetriebnahme; ein Grund, warum Installationstermine Ende Januar und Ende Juli regelmäßig zum Streitthema werden.",
         },
         { t: "h", level: 2, text: "Wenn der Strom nichts wert ist" },
         {
@@ -213,6 +237,10 @@ export const anlagenArticles: Article[] = [
       ],
     },
     related: ["photovoltaik", "eeg-umlage", "dynamischer-tarif", "marktstammdatenregister"],
+    sources: [
+      { label: "EEG 2023 – Gesetz für den Ausbau erneuerbarer Energien", url: "https://www.gesetze-im-internet.de/eeg_2014/" },
+      { label: "Bundesnetzagentur – Fördersätze für Solaranlagen", url: "https://www.bundesnetzagentur.de/" },
+    ],
   },
 
   {
@@ -266,7 +294,7 @@ export const anlagenArticles: Article[] = [
     slug: "waermepumpe",
     category: "anlagen",
     featured: true,
-    updated: U,
+    updated: U2,
     aka: ["Heizungswärmepumpe", "JAZ", "Jahresarbeitszahl", "COP", "Heizstrom", "Wärmepumpentarif"],
     title: { de: "Wärmepumpe", en: "Heat pump" },
     summary: {
@@ -309,7 +337,7 @@ export const anlagenArticles: Article[] = [
         { t: "h", level: 2, text: "Tarif und Netzentgelt" },
         {
           t: "p",
-          text: "Wärmepumpen über 4,2 kW fallen unter [[paragraf-14a-enwg|§ 14a EnWG]]: Der Netzbetreiber darf sie im Notfall auf 4,2 kW drosseln, dafür gibt es reduzierte [[netzentgelte|Netzentgelte]]. Mit separatem Zähler liegen Wärmepumpentarife 2026 bei rund 21 bis 26 ct/kWh statt 33 bis 40 ct/kWh im Haushaltstarif.",
+          text: "Wärmepumpen über 4,2 kW fallen unter [[paragraf-14a-enwg|§ 14a EnWG]]: Der Netzbetreiber darf sie im Notfall auf 4,2 kW drosseln, dafür gibt es reduzierte [[netzentgelte|Netzentgelte]] – wahlweise als **Modul 1** (pauschale Reduzierung), **Modul 2** (prozentual abgesenkter Arbeitspreis, setzt einen separaten Zählpunkt voraus) oder seit dem 1. April 2025 zusätzlich **Modul 3** (zeitvariables Netzentgelt, nur in Kombination mit Modul 1). Mit separatem Zähler liegen Wärmepumpentarife 2026 bei rund 21 bis 26 ct/kWh statt 33 bis 40 ct/kWh im Haushaltstarif.",
         },
         {
           t: "note",
@@ -319,6 +347,10 @@ export const anlagenArticles: Article[] = [
       ],
     },
     related: ["waermepumpen-typen", "heizungsarten", "paragraf-14a-enwg", "energiemanagement"],
+    sources: [
+      { label: "§ 14a EnWG – Netzorientierte Steuerung steuerbarer Verbrauchseinrichtungen", url: "https://www.gesetze-im-internet.de/enwg_2005/__14a.html" },
+      { label: "Bundesnetzagentur – Festlegungen zu § 14a EnWG", url: "https://www.bundesnetzagentur.de/" },
+    ],
   },
 
   {
@@ -467,7 +499,7 @@ export const anlagenArticles: Article[] = [
   {
     slug: "bhkw",
     category: "anlagen",
-    updated: U,
+    updated: U2,
     aka: ["Blockheizkraftwerk", "KWK", "Kraft-Wärme-Kopplung", "Mini-BHKW", "Brennstoffzelle"],
     title: { de: "Blockheizkraftwerk (BHKW)", en: "Combined heat and power unit" },
     summary: {
@@ -489,8 +521,8 @@ export const anlagenArticles: Article[] = [
         {
           t: "ul",
           items: [
-            "**KWK-Zuschlag** nach dem KWKG für jede erzeugte Kilowattstunde, gestaffelt nach Leistung",
-            "**Vermiedene Netznutzungsentgelte** und der übliche Strompreis für eingespeisten Strom",
+            "**KWK-Zuschlag** nach dem KWKG für jede **eingespeiste** Kilowattstunde, gestaffelt nach Leistung; für selbst verbrauchten Strom gibt es ihn nur bei kleinen Anlagen bis 100 kW, und dort zu einem reduzierten Satz",
+            "Der übliche Strompreis für eingespeisten Strom; **vermiedene Netznutzungsentgelte** erhalten nur noch Bestandsanlagen – für Anlagen mit Inbetriebnahme ab 2023 sind sie nach § 18 StromNEV abgeschafft",
             "**Energiesteuerentlastung** auf das eingesetzte Gas unter bestimmten Bedingungen",
             "Der selbst genutzte Strom spart den vollen Bezugspreis – wie bei [[photovoltaik|PV]] der stärkste Hebel",
           ],
@@ -508,12 +540,16 @@ export const anlagenArticles: Article[] = [
       ],
     },
     related: ["kwk-umlage", "photovoltaik", "fernwaerme", "stromsteuer"],
+    sources: [
+      { label: "§ 18 StromNEV – Entgelt für dezentrale Einspeisung", url: "https://www.gesetze-im-internet.de/stromnev/__18.html" },
+      { label: "KWKG – Kraft-Wärme-Kopplungsgesetz", url: "https://www.gesetze-im-internet.de/kwkg_2016/" },
+    ],
   },
 
   {
     slug: "wallbox",
     category: "anlagen",
-    updated: U,
+    updated: U2,
     aka: ["Ladepunkt", "Ladestation", "Elektroauto laden", "11 kW", "Ladeinfrastruktur", "THG-Quote"],
     title: { de: "Wallbox und Ladeinfrastruktur", en: "Wallbox and charging" },
     summary: {
@@ -545,7 +581,7 @@ export const anlagenArticles: Article[] = [
         { t: "h", level: 2, text: "§ 14a und Tarif" },
         {
           t: "p",
-          text: "Als steuerbare Verbrauchseinrichtung über 4,2 kW fällt die Wallbox unter [[paragraf-14a-enwg|§ 14a EnWG]]. Der Netzbetreiber darf sie im Engpassfall auf 4,2 kW drosseln – genug für rund 20 Kilometer Reichweite je Stunde. Im Gegenzug gibt es reduzierte [[netzentgelte|Netzentgelte]], je nach gewähltem Modul als Pauschale oder als abgesenkter Arbeitspreis.",
+          text: "Als steuerbare Verbrauchseinrichtung über 4,2 kW fällt die Wallbox unter [[paragraf-14a-enwg|§ 14a EnWG]]. Der Netzbetreiber darf sie im Engpassfall auf 4,2 kW drosseln – genug für rund 20 Kilometer Reichweite je Stunde. Im Gegenzug gibt es reduzierte [[netzentgelte|Netzentgelte]] in drei Modulen: **Modul 1** ist eine pauschale Reduzierung des Netzentgelts, **Modul 2** eine prozentuale Absenkung des Arbeitspreises über einen separaten Zählpunkt, und seit dem 1. April 2025 kann **Modul 3** – ein zeitvariables Netzentgelt mit günstigen Zeitfenstern – zusätzlich zu Modul 1 gewählt werden.",
         },
         {
           t: "note",
@@ -560,6 +596,10 @@ export const anlagenArticles: Article[] = [
       ],
     },
     related: ["paragraf-14a-enwg", "dynamischer-tarif", "energiemanagement", "erzeugungsanlagen"],
+    sources: [
+      { label: "§ 14a EnWG – Netzorientierte Steuerung steuerbarer Verbrauchseinrichtungen", url: "https://www.gesetze-im-internet.de/enwg_2005/__14a.html" },
+      { label: "Bundesnetzagentur – Festlegungen zu § 14a EnWG", url: "https://www.bundesnetzagentur.de/" },
+    ],
   },
 
   {
@@ -606,7 +646,7 @@ export const anlagenArticles: Article[] = [
   {
     slug: "marktstammdatenregister",
     category: "anlagen",
-    updated: U,
+    updated: U2,
     aka: ["MaStR", "Anlagenregister", "Registrierung", "Anlagenanmeldung", "Inbetriebnahme"],
     title: { de: "Marktstammdatenregister (MaStR)", en: "Core energy market data register" },
     summary: {
@@ -627,6 +667,7 @@ export const anlagenArticles: Article[] = [
             "jeder [[batteriespeicher|Batteriespeicher]]",
             "Fristen: **innerhalb eines Monats** nach Inbetriebnahme",
             "Änderungen – Erweiterung, Stilllegung, Betreiberwechsel – ebenfalls binnen eines Monats",
+            "der **Betreiber** selbst, als eigener Marktakteur – die Registrierung der Person oder Firma ist ein getrennter Schritt vor der Registrierung der Einheit",
           ],
         },
         {
@@ -639,14 +680,225 @@ export const anlagenArticles: Article[] = [
           t: "p",
           text: "Die **MaStR-Nummer** identifiziert eine Anlage eindeutig, ähnlich wie die [[marktlokation|MaLo-ID]] eine Entnahmestelle. Sie taucht in Vergütungsprozessen und im Datenaustausch auf und gehört deshalb in jedes Datenmodell, das Erzeugungsanlagen abbildet. Das Register ist zudem öffentlich einsehbar – nützlich für Plausibilitätsprüfungen.",
         },
+        {
+          t: "table",
+          head: ["Präfix", "Objekt"],
+          rows: [
+            ["`SEE`", "Stromerzeugungseinheit, etwa eine PV-Anlage oder ein BHKW"],
+            ["`SGE`", "Gaserzeugungseinheit"],
+            ["`SSE`", "Stromspeichereinheit, also ein [[batteriespeicher|Batteriespeicher]]"],
+            ["`ABR`", "Anlagenbetreiber – die Person oder Firma, nicht die Anlage"],
+          ],
+          caption: "Aufbau der MaStR-Nummer: ein Präfix aus drei Buchstaben, gefolgt von zwölf Ziffern.",
+        },
+        {
+          t: "p",
+          text: "Für die Anbindung eigener Systeme stellt das Register einen **Gesamtdatenexport** als CSV/XML-Download sowie eine öffentliche Web-Schnittstelle bereit. Damit lassen sich Anlagendaten aus dem Onboarding automatisiert gegen den amtlichen Eintrag prüfen, statt sie abzutippen.",
+        },
       ],
     },
     related: ["photovoltaik", "balkonkraftwerk", "einspeiseverguetung", "erzeugungsanlagen"],
     sources: [
-      {
-        label: "Marktstammdatenregister der Bundesnetzagentur",
-        url: "https://www.marktstammdatenregister.de/MaStR",
-      },
+      { label: "Marktstammdatenregister der Bundesnetzagentur", url: "https://www.marktstammdatenregister.de/MaStR" },
+      { label: "MaStR – Datendownload (Gesamtdatenexport)", url: "https://www.marktstammdatenregister.de/MaStR/Datendownload" },
+    ],
+  },
+
+  {
+    slug: "netzanschluss",
+    category: "anlagen",
+    updated: U2,
+    aka: ["Hausanschluss", "Netzanschlussvertrag", "Anschlussnutzung", "Anschlussnehmer", "Anschlussnutzer", "Baukostenzuschuss", "BKZ", "NAV", "Anschlussbegehren", "§ 8 EEG", "Netzverträglichkeitsprüfung", "Inbetriebsetzungsprotokoll"],
+    title: { de: "Netzanschluss und Anlagenanmeldung", en: "Grid connection and installation registration" },
+    summary: {
+      de: "Die physische Verbindung eines Grundstücks mit dem Verteilnetz – geregelt in der NAV – und der Weg, auf dem eine Erzeugungsanlage über Installateur und Netzbetreiber ans Netz kommt.",
+      en: "The physical link between a property and the distribution grid – governed by the NAV – and the path by which a generating installation reaches the grid via installer and grid operator.",
+    },
+    body: {
+      de: [
+        {
+          t: "lead",
+          text: "Bevor ein Zähler hängt, ein Tarif gilt oder eine PV-Anlage einspeist, braucht es einen Netzanschluss. Er ist ein eigenes Rechtsverhältnis mit eigenen Vertragspartnern, eigenen Kosten und – bei Erzeugungsanlagen – einem eigenen Anmeldeprozess mit gesetzlichen Fristen.",
+        },
+        { t: "h", level: 2, text: "Zwei Rechtsverhältnisse, zwei Personen" },
+        {
+          t: "p",
+          text: "Die **Niederspannungsanschlussverordnung (NAV)** trennt zwischen dem Anschluss selbst und seiner Nutzung. Das ist der Grund, warum in einem Mietshaus der Eigentümer und der Mieter unterschiedliche Verträge mit dem [[netzbetreiber|Netzbetreiber]] haben – ohne dass einer von beiden sie je unterschrieben hat.",
+        },
+        {
+          t: "table",
+          head: ["", "Netzanschlussverhältnis", "Anschlussnutzungsverhältnis"],
+          rows: [
+            ["Vertragspartner", "**Anschlussnehmer** – in der Regel der Grundstückseigentümer", "**Anschlussnutzer** – wer den Anschluss tatsächlich zur Entnahme nutzt, also auch der Mieter"],
+            ["Gegenstand", "Herstellung, Betrieb, Änderung und Unterhaltung des Hausanschlusses", "Recht, über den Anschluss Strom zu entnehmen oder einzuspeisen"],
+            ["Zustandekommen", "Netzanschlussvertrag, meist mit dem Bauantrag", "konkludent durch die Entnahme (§ 3 NAV)"],
+            ["Kosten", "Hausanschlusskosten und Baukostenzuschuss", "keine eigenen – Netzentgelte laufen über den Lieferanten"],
+            ["Ende", "Rückbau oder Eigentümerwechsel", "Auszug"],
+          ],
+        },
+        {
+          t: "p",
+          text: "Der Anschlussnutzer ist auch Vertragspartner des [[messstellenbetrieb|Messstellenbetreibers]] und derjenige, den der [[energieliefervertrag|Liefervertrag]] adressiert – siehe [[letztverbraucher|Kundenarten]].",
+        },
+        { t: "h", level: 2, text: "Was der Anschluss kostet" },
+        {
+          t: "dl",
+          items: [
+            { term: "Hausanschlusskosten (§ 9 NAV)", def: "Die tatsächlichen Kosten für Herstellung oder Änderung des Anschlusses von der Straßenleitung bis zum Hausanschlusskasten. Der Netzbetreiber darf sie in Rechnung stellen – nach Aufwand oder als Pauschale." },
+            { term: "Baukostenzuschuss (§ 11 NAV)", def: "Ein anteiliger Beitrag zu den Kosten des vorgelagerten Netzes, bemessen an der vorgehaltenen Leistung. Für Standard-Hausanschlüsse bis 30 kW Leistungsbedarf verlangen viele Netzbetreiber keinen BKZ; darüber wird er relevant, etwa bei Wärmepumpe plus Wallbox oder im Gewerbe." },
+            { term: "Netzverträglichkeitsprüfung", def: "Vor Zusage prüft der Netzbetreiber, ob Leitung und Ortsnetzstation die zusätzliche Last oder Einspeisung tragen. Bei Erzeugungsanlagen ist das der Kern der Antwort auf das Anschlussbegehren; sie kann einen anderen Verknüpfungspunkt oder eine Netzverstärkung ergeben." },
+          ],
+        },
+        { t: "h", level: 2, text: "Erzeugungsanlagen: Anschlussbegehren nach § 8 EEG" },
+        {
+          t: "p",
+          text: "Für [[photovoltaik|PV-Anlagen]], [[bhkw|BHKW]] und andere EEG-Anlagen hat der Betreiber einen **Anspruch auf Anschluss**: Der Netzbetreiber muss die Anlage unverzüglich und vorrangig an dem Punkt anschließen, der nach Spannungsebene und Entfernung am günstigsten ist (§ 8 Abs. 1 EEG). Der Prozess läuft in der Praxis über das Portal des Verteilnetzbetreibers.",
+        },
+        {
+          t: "steps",
+          items: [
+            { title: "Anschlussbegehren stellen", text: "Der Installateur oder Betreiber übermittelt Standort, Leistung, Wechselrichter- und Speicherdaten und das gewünschte Messkonzept – meist im VNB-Portal." },
+            { title: "Antwort des Netzbetreibers", text: "Er muss dem Anschlussbegehrenden **unverzüglich, spätestens acht Wochen** nach Eingang einen Zeitplan für die Bearbeitung übermitteln und die notwendigen Informationen bereitstellen (§ 8 Abs. 5 und 6 EEG). Das Ergebnis ist die Anschlusszusage mit Verknüpfungspunkt." },
+            { title: "Installation und Inbetriebsetzung", text: "Ein in das **Installateurverzeichnis** des Netzbetreibers eingetragener Elektrofachbetrieb (§ 13 NAV) baut die Anlage, setzt sie in Betrieb und erstellt das **Inbetriebsetzungsprotokoll** nach VDE-AR-N 4105." },
+            { title: "Zählersetzung", text: "Der Messstellenbetreiber tauscht auf einen [[zaehlertypen|Zweirichtungszähler]]; ab 7 kW ist ein [[intelligentes-messsystem|intelligentes Messsystem]] Pflichteinbaufall." },
+            { title: "Registrierung im MaStR", text: "Innerhalb eines Monats nach Inbetriebnahme im [[marktstammdatenregister|Marktstammdatenregister]] – ohne Eintrag keine [[einspeiseverguetung|Einspeisevergütung]]." },
+          ],
+        },
+        {
+          t: "note",
+          kind: "law",
+          text: "**Fiktive Zustimmung für Kleinanlagen**: Antwortet der Netzbetreiber auf ein vollständiges Anschlussbegehren für eine Anlage bis **30 kW** nicht innerhalb **eines Monats**, gilt der Anschluss am Verknüpfungspunkt des bestehenden Hausanschlusses als zugesagt (§ 8 Abs. 5 EEG in der Fassung des Solarpakets I, seit Mai 2024; zuvor galt die Regel für Anlagen bis 10,8 kW). Für [[balkonkraftwerk|Steckersolargeräte]] entfällt die Anmeldung beim Netzbetreiber ganz.",
+        },
+        { t: "h", level: 2, text: "Wo Prozesse stocken" },
+        {
+          t: "ul",
+          items: [
+            "**Unvollständige Anträge**: Die Ein-Monats-Frist läuft erst ab vollständigem Begehren – jedes fehlende Datenblatt setzt sie zurück",
+            "**Netzverstärkung nötig**: Dann verschiebt sich der Anschluss um Monate; der Betreiber hat Anspruch auf Information über Umfang und Zeitplan",
+            "**Anschlussnehmer ist nicht Betreiber**: Beim Mieter mit PV oder bei [[mieterstrom|Mieterstrom]] muss der Eigentümer der Änderung des Netzanschlusses zustimmen",
+            "**Portal-Vielfalt**: Rund 850 Verteilnetzbetreiber mit eigenen Portalen und Formularen; einheitliche Schnittstellen entstehen erst schrittweise",
+          ],
+        },
+        {
+          t: "note",
+          kind: "praxis",
+          text: "Wer Anlagen verkauft oder Installateure anbindet, sollte den Anschlussprozess als **Zustandsobjekt** mit den Meilensteinen Begehren gestellt → Zusage → Inbetriebsetzung → Zähler gesetzt → MaStR registriert führen. Das Inbetriebnahmedatum aus dem Protokoll bestimmt den Vergütungssatz und die MaStR-Frist – es gehört als eigenes Feld ins Datenmodell, getrennt vom Installationsdatum und vom Datum der Zählersetzung.",
+        },
+      ],
+    },
+    related: ["erzeugungsanlagen", "photovoltaik", "marktstammdatenregister", "netzbetreiber", "letztverbraucher", "eigenverbrauch", "messstellenbetrieb"],
+    sources: [
+      { label: "Niederspannungsanschlussverordnung (NAV)", url: "https://www.gesetze-im-internet.de/nav/" },
+      { label: "§ 8 EEG 2023 – Anschluss", url: "https://www.gesetze-im-internet.de/eeg_2014/__8.html" },
+      { label: "Marktstammdatenregister der Bundesnetzagentur", url: "https://www.marktstammdatenregister.de/MaStR" },
+    ],
+  },
+
+  {
+    slug: "eigenverbrauch",
+    category: "anlagen",
+    updated: U2,
+    aka: ["Eigenversorgung", "Eigenverbrauchsquote", "Autarkiegrad", "Überschusseinspeisung", "Volleinspeisung", "Messkonzept", "Kaskade", "§ 3 Nr. 19 EEG", "§ 9 StromStG"],
+    title: { de: "Eigenverbrauch und Eigenversorgung", en: "Self-consumption and self-supply" },
+    summary: {
+      de: "Selbst erzeugter Strom, der ohne Netzdurchleitung selbst verbraucht wird – abgabenfrei seit 2022, stromsteuerfrei bis 2 MW, und der eigentliche Werttreiber jeder PV-Anlage.",
+      en: "Self-generated electricity consumed without passing through the grid – free of levies since 2022, exempt from electricity tax up to 2 MW, and the real value driver of any PV system.",
+    },
+    body: {
+      de: [
+        {
+          t: "lead",
+          text: "Jede selbst verbrauchte Kilowattstunde ersetzt eine, die sonst zum vollen Endkundenpreis aus dem Netz gekommen wäre. Deshalb entscheidet nicht die Anlagengröße über die Wirtschaftlichkeit, sondern der Anteil des Stroms, der im Haus bleibt.",
+        },
+        { t: "h", level: 2, text: "Der Rechtsbegriff: Eigenversorgung" },
+        {
+          t: "p",
+          text: "**Eigenversorgung** ist nach § 3 Nr. 19 EEG der Verbrauch von Strom, den eine Person **selbst** in einer Anlage erzeugt, die sie **selbst betreibt**, im **unmittelbaren räumlichen Zusammenhang** und **ohne Durchleitung durch ein Netz**. Alle vier Merkmale müssen zusammenkommen. Fehlt eines – etwa weil der Betreiber der Anlage nicht der Verbraucher ist –, liegt eine Lieferung an Dritte vor, wie bei [[mieterstrom|Mieterstrom]].",
+        },
+        {
+          t: "table",
+          head: ["Abgabe", "Auf Eigenverbrauch", "Grundlage"],
+          rows: [
+            ["[[eeg-umlage|EEG-Umlage]]", "entfällt – die Umlage wurde zum 1. Juli 2022 auf null gesetzt und Anfang 2023 abgeschafft; auch der frühere anteilige Satz für Eigenversorger ist Geschichte", "EnFG"],
+            ["[[stromsteuer|Stromsteuer]]", "befreit für Anlagen bis **2 MW**, wenn der Strom im räumlichen Zusammenhang vom Betreiber selbst verbraucht wird", "§ 9 Abs. 1 Nr. 3 StromStG"],
+            ["[[netzentgelte|Netzentgelte]], [[konzessionsabgabe|Konzessionsabgabe]], übrige Umlagen", "fallen nicht an – sie hängen an der Netzentnahme", "—"],
+            ["[[umsatzsteuer-energie|Umsatzsteuer]]", "seit dem Nullsteuersatz 2023 für kleine Anlagen praktisch ohne Bedeutung", "§ 12 Abs. 3 UStG"],
+          ],
+        },
+        { t: "h", level: 2, text: "Überschuss- oder Volleinspeisung" },
+        {
+          t: "p",
+          text: "Wer einspeist, wählt zwischen zwei Modellen mit unterschiedlichen Vergütungssätzen – die aktuellen Werte stehen im Artikel [[einspeiseverguetung|Einspeisevergütung]]. Die Entscheidung gilt jeweils für ein Kalenderjahr und kann durch Mitteilung an den Netzbetreiber vor dem 1. Dezember für das Folgejahr geändert werden.",
+        },
+        {
+          t: "dl",
+          items: [
+            { term: "Überschusseinspeisung", def: "Der Strom fließt zuerst zu den Verbrauchern im Haus; nur was übrig ist, geht ins Netz. Standard für Wohngebäude." },
+            { term: "Volleinspeisung", def: "Die gesamte Erzeugung geht ins Netz, der Haushalt bezieht weiter komplett aus dem Netz. Höherer Vergütungssatz, aber kein Eigenverbrauch – lohnt nur ohne nennenswerten Verbrauch am Standort." },
+          ],
+        },
+        { t: "h", level: 2, text: "Messkonzepte" },
+        {
+          t: "table",
+          head: ["Konzept", "Zähler", "Wann"],
+          rows: [
+            ["Überschusseinspeisung, einfach", "ein [[zaehlertypen|Zweirichtungszähler]] am Netzanschluss (Bezug 1.8.0, Einspeisung 2.8.0)", "Standardfall Einfamilienhaus; der Eigenverbrauch wird nicht gemessen, sondern ergibt sich aus Erzeugung minus Einspeisung"],
+            ["mit Erzeugungszähler", "zusätzlich ein Zähler direkt hinter dem Wechselrichter", "wenn die Erzeugung nachgewiesen werden muss – bei [[kwk-umlage|KWK-Zuschlag]], Mieterstrom, Stromsteuer-Nachweisen oder mehreren Anlagen mit verschiedenen Vergütungssätzen"],
+            ["Volleinspeisung", "eigener Einspeisezähler für die Anlage, getrennter Bezugszähler", "wenn kein Eigenverbrauch stattfinden soll"],
+            ["Kaskade", "Zähler hintereinander geschaltet: Summenzähler am Netzanschluss, Unterzähler je Nutzer oder Anlage", "Mehrfamilienhaus, Gewerbe mit Untermietern, Mieterstrom"],
+          ],
+          caption: "Das Messkonzept legt der Netzbetreiber im Rahmen des Anschlussbegehrens fest ([[netzanschluss|Netzanschluss]]); die [[marktlokation|Marktlokationen]] für Bezug und Einspeisung folgen daraus.",
+        },
+        { t: "h", level: 2, text: "Zwei Quoten, die oft verwechselt werden" },
+        {
+          t: "formula",
+          expr: "Eigenverbrauchsquote = Eigenverbrauch / Erzeugung · 100 %   ·   Autarkiegrad = Eigenverbrauch / Gesamtverbrauch · 100 %",
+          where: [
+            { sym: "Eigenverbrauchsquote", desc: "Welcher Anteil des **erzeugten** Stroms im Haus bleibt – die Sicht der Anlage" },
+            { sym: "Autarkiegrad", desc: "Welcher Anteil des **verbrauchten** Stroms aus der eigenen Anlage stammt – die Sicht des Haushalts" },
+          ],
+        },
+        {
+          t: "example",
+          title: "10 kWp auf einem Einfamilienhaus",
+          lines: [
+            { label: "Erzeugung", value: "9.500 kWh im Jahr" },
+            { label: "Gesamtverbrauch", value: "4.500 kWh im Jahr" },
+            { label: "Eigenverbrauchsquote", value: "30 % → 2.850 kWh selbst verbraucht" },
+            { label: "Einspeisung", value: "9.500 − 2.850 = 6.650 kWh" },
+            { label: "Netzbezug", value: "4.500 − 2.850 = 1.650 kWh" },
+            { label: "Autarkiegrad", value: "2.850 / 4.500 = 63 %" },
+          ],
+          result: { label: "Ersparnis + Erlös", value: "2.850 kWh × 37 ct = 1.054,50 € gespart, 6.650 kWh × 7,7 ct = 512,05 € Vergütung" },
+        },
+        {
+          t: "note",
+          kind: "info",
+          text: "Ohne Speicher liegt die Eigenverbrauchsquote im Wohnhaus bei 25 bis 35 %, weil die Erzeugung mittags anfällt und der Verbrauch abends. Ein [[batteriespeicher|Speicher]], eine [[waermepumpe|Wärmepumpe]] oder eine [[wallbox|Wallbox]] mit [[energiemanagement|Energiemanagement]] heben sie auf 55 bis 70 %. Der Autarkiegrad ist immer die Zahl, die im Verkaufsgespräch genannt wird – die Eigenverbrauchsquote die, die die Wirtschaftlichkeit bestimmt.",
+        },
+        { t: "h", level: 2, text: "Wirtschaftlichkeit: die Faustformel" },
+        {
+          t: "p",
+          text: "Eine selbst verbrauchte Kilowattstunde spart den Bezugspreis von rund **35 bis 40 ct/kWh**; eine eingespeiste bringt rund **8 ct/kWh**. Eine Kilowattstunde Eigenverbrauch ist also etwa **viereinhalb- bis fünfmal** so viel wert wie eine eingespeiste. Jede Maßnahme, die Verbrauch in die Erzeugungsstunden verschiebt, verdient deshalb mehr als jedes zusätzliche Modul.",
+        },
+        { t: "h", level: 2, text: "Direktvermarktung" },
+        {
+          t: "p",
+          text: "Ab **100 kW** installierter Leistung muss der eingespeiste Strom in der **Direktvermarktung** verkauft werden: Ein Direktvermarkter vermarktet ihn an der Börse, der Betreiber erhält die **Marktprämie** als Differenz zwischen anzulegendem Wert und Monatsmarktwert. Am Eigenverbrauch ändert das nichts – er bleibt abgabenfrei und wird nicht vermarktet. Für Gewerbe mit großem Dach ist die Kombination aus hohem Eigenverbrauch und Direktvermarktung des Rests der Regelfall; siehe [[grosshandel-beschaffung|Großhandel und Beschaffung]].",
+        },
+        {
+          t: "note",
+          kind: "praxis",
+          text: "Für Abrechnungssysteme ist Eigenverbrauch eine **Größe, die nicht gemessen wird**, sondern berechnet: Erzeugung minus Einspeisung, oder bei Kaskaden aus der Differenz mehrerer Zähler. Wer Eigenverbrauch anzeigt oder vergütet, braucht deshalb sowohl die Erzeugungswerte des Wechselrichters oder Erzeugungszählers als auch die Netzwerte des Zweirichtungszählers – und muss mit Abweichungen zwischen beiden Quellen rechnen.",
+        },
+      ],
+    },
+    related: ["photovoltaik", "einspeiseverguetung", "batteriespeicher", "netzanschluss", "stromsteuer", "eeg-umlage", "mieterstrom", "energiemanagement"],
+    sources: [
+      { label: "§ 3 EEG 2023 – Begriffsbestimmungen (Nr. 19 Eigenversorgung)", url: "https://www.gesetze-im-internet.de/eeg_2014/__3.html" },
+      { label: "§ 9 StromStG – Steuerbefreiungen, Steuerermäßigungen", url: "https://www.gesetze-im-internet.de/stromstg/__9.html" },
+      { label: "§ 21 EEG 2023 – Einspeisevergütung und Mieterstromzuschlag", url: "https://www.gesetze-im-internet.de/eeg_2014/__21.html" },
+      { label: "Bundesnetzagentur – Fördersätze für Solaranlagen", url: "https://www.bundesnetzagentur.de/" },
     ],
   },
 ];
