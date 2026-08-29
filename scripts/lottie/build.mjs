@@ -12,7 +12,7 @@ import { dirname, resolve } from "node:path";
 
 import {
   C, anim, arc, ellipse, fill, gradFill, gradStroke, group, layer, line,
-  poly, rect, scene, stroke, trim,
+  poly, rect, scene, still, stroke, trim,
 } from "./lib.mjs";
 
 const W = 520;
@@ -417,6 +417,381 @@ function prosumer() {
   return scene({ nm: "Hero D — Prosumer", w: W, h: H, op: LOOP, layers });
 }
 
+
+/* ================================================================= *
+ * E — Anlagen (Energiehub)
+ * Everything behind the meter hangs off one hub: PV feeds in, heat pump,
+ * battery and wallbox draw. Each device animates the one thing it does.
+ * ================================================================= */
+
+function anlagen() {
+  const HUB = [260, 160];
+  const D = { pv: [140, 84], hp: [380, 84], bat: [140, 236], wb: [380, 236] };
+  const RAILS = {
+    pv: [[172, 84], [212, 84], [212, 150], [238, 150]],
+    hp: [[282, 150], [308, 150], [308, 84], [348, 84]],
+    bat: [[172, 236], [212, 236], [212, 170], [238, 170]],
+    wb: [[282, 170], [308, 170], [308, 236], [348, 236]],
+  };
+  const layers = [];
+  let ind = 1;
+
+  Object.entries(RAILS).forEach(([k, pts], i) => {
+    // PV feeds the hub, the hub feeds the rest: rails are drawn in flow order.
+    layers.push(
+      layer(`pulse-${k}`, [
+        group("p", [
+          poly(pts),
+          trim(0, 26, anim([[0, i * 90, "linear"], [LOOP, i * 90 + 360]])),
+          gradStroke([pts[0][0], pts[0][1]], [pts.at(-1)[0], pts.at(-1)[1]], 4.5,
+            k === "pv" ? [C.amber, C.purple] : [C.purple, C.cyan]),
+        ]),
+      ], { ind: ind++, op: LOOP }),
+    );
+  });
+  Object.entries(RAILS).forEach(([k, pts]) => {
+    layers.push(layer(`rail-${k}`, [group("r", [poly(pts), stroke(C.neutral, 1.6, { opacity: 32 })])], { ind: ind++, op: LOOP }));
+  });
+
+  /* hub */
+  const [hx, hy] = HUB;
+  layers.push(
+    layer("hub-halo", [group("h", [rect(hx, hy, 44, 44, 12), stroke(C.purple, 2)])], {
+      ind: ind++, op: LOOP, a: [hx, hy, 0], p: [hx, hy, 0],
+      s: anim([[0, [100, 100, 100], "exit"], [120, [175, 175, 100]], [LOOP, [175, 175, 100]]]),
+      o: anim([[0, 42, "exit"], [120, 0], [LOOP, 0]]),
+    }),
+  );
+  layers.push(
+    layer("hub", [
+      group("box", [rect(hx, hy, 44, 44, 12), stroke(C.purple, 2.4)]),
+      group("bolt", [
+        poly([[hx + 4, hy - 13], [hx - 8, hy + 3], [hx + 1, hy + 3], [hx - 4, hy + 14], [hx + 8, hy - 2], [hx - 1, hy - 2]], true),
+        fill(C.purple),
+      ]),
+    ], { ind: ind++, op: LOOP }),
+  );
+
+  /* PV panel: cells glimmer in reading order */
+  const [px, py] = D.pv;
+  [-1, 0, 1].forEach((col) => [-1, 1].forEach((row, r) => {
+    const i = (col + 1) * 2 + r;
+    const t0 = i * 12;
+    layers.push(
+      layer(`pv-cell-${i}`, [group("c", [
+        rect(px + col * 19, py + row * 9.5, 16, 15, 2),
+        gradFill([px - 30, py + 20], [px + 30, py - 20], [C.purple, C.cyan]),
+      ])], {
+        ind: ind++, op: LOOP,
+        o: anim([[0, 30, "linear"], [t0, 30, "entrance"], [t0 + 16, 100, "exit"], [t0 + 96, 30, "linear"], [LOOP, 30]]),
+      }),
+    );
+  }));
+  layers.push(layer("pv-frame", [group("f", [rect(px, py, 64, 42, 4), stroke(C.neutral, 2.4)])], { ind: ind++, op: LOOP }));
+
+  /* heat pump: casing, guard ring, spinning fan */
+  const [qx, qy] = D.hp;
+  layers.push(
+    layer("hp-fan", [group("g", [
+      ...[0, 120, 240].map((d) => { const [bx, by] = onCircle(qx, qy, 12, 90 + d); return line(qx, qy, bx, by); }),
+      stroke(C.purple, 2.6),
+    ]), group("h", [ellipse(qx, qy, 6, 6), fill(C.purple)])], {
+      ind: ind++, op: LOOP, a: [qx, qy, 0], p: [qx, qy, 0],
+      r: anim([[0, 0, "linear"], [LOOP, 240]]),
+    }),
+  );
+  layers.push(
+    layer("hp", [
+      group("ring", [ellipse(qx, qy, 30, 30), stroke(C.neutral, 1.6, { opacity: 55 })]),
+      group("box", [rect(qx, qy, 64, 42, 4), stroke(C.neutral, 2.4)]),
+    ], { ind: ind++, op: LOOP }),
+  );
+
+  /* battery: charge level breathes */
+  const [bx, by] = D.bat;
+  layers.push(
+    layer("bat-fill", [group("f", [rect(bx - 2, by, 48, 18, 3), gradFill([bx - 26, by], [bx + 22, by], [C.purple, C.cyan])])], {
+      ind: ind++, op: LOOP, a: [bx - 26, by, 0], p: [bx - 26, by, 0],
+      s: anim([[0, [18, 100, 100], "settle"], [104, [100, 100, 100], "settle"], [LOOP, [18, 100, 100]]]),
+    }),
+  );
+  layers.push(
+    layer("bat", [
+      group("b", [rect(bx - 2, by, 56, 28, 4), stroke(C.neutral, 2.4)]),
+      group("cap", [rect(bx + 30, by, 5, 12, 1.5), fill(C.neutral)]),
+    ], { ind: ind++, op: LOOP }),
+  );
+
+  /* wallbox: socket, blinking charge indicator */
+  const [wx, wy] = D.wb;
+  layers.push(
+    layer("wb-led", [group("l", [ellipse(wx, wy + 16, 6, 6), fill(C.cyan)])], {
+      ind: ind++, op: LOOP,
+      o: anim([[0, 25, "linear"], [36, 25, "entrance"], [50, 100, "linear"], [76, 100, "exit"], [96, 25, "linear"], [LOOP, 25]]),
+    }),
+  );
+  layers.push(
+    layer("wb", [
+      group("box", [rect(wx, wy, 40, 54, 6), stroke(C.neutral, 2.4)]),
+      group("socket", [ellipse(wx, wy - 6, 18, 18), stroke(C.neutral, 1.8)]),
+      group("pins", [ellipse(wx - 4, wy - 8, 3, 3), ellipse(wx + 4, wy - 8, 3, 3), ellipse(wx, wy - 1, 3, 3), fill(C.neutral)]),
+    ], { ind: ind++, op: LOOP }),
+  );
+
+  return scene({ nm: "Hero E — Anlagen", w: W, h: H, op: LOOP, layers });
+}
+
+/* ================================================================= *
+ * F — Abrechnung
+ * Eleven equal instalments rise month by month; the twelfth slot is the
+ * annual statement that settles the difference.
+ * ================================================================= */
+
+function abrechnung() {
+  const base = 262;
+  const x0 = 40;
+  const bw = 28;
+  const gap = 8;
+  const hInst = 168;
+  const hSettle = 62;
+  const layers = [];
+  let ind = 1;
+  const cxOf = (i) => x0 + i * (bw + gap) + bw / 2;
+  const FADE = [160, 178];
+
+  /* settlement bar */
+  {
+    const cx = cxOf(11);
+    layers.push(
+      layer("settlement", [group("s", [rect(cx, base - hSettle / 2, bw, hSettle, 3), fill(C.cyan)])], {
+        ind: ind++, op: LOOP, a: [cx, base, 0], p: [cx, base, 0],
+        s: anim([[0, [100, 0, 100], "linear"], [112, [100, 0, 100], "pop"], [134, [100, 100, 100], "linear"], [LOOP, [100, 100, 100]]]),
+        o: anim([[0, 100, "linear"], [FADE[0], 100, "exit"], [FADE[1], 0], [LOOP, 0]]),
+      }),
+    );
+    // Leader from the instalment level down to the settlement bar's top.
+    layers.push(
+      layer("settle-leader", [group("l", [
+        line(cxOf(10) + bw / 2 + 4, base - hInst, cx + bw / 2 + 4, base - hInst),
+        line(cx + bw / 2 + 4, base - hInst, cx + bw / 2 + 4, base - hSettle),
+        stroke(C.cyan, 1.4, { opacity: 70 }),
+        trim(0, anim([[0, 0, "linear"], [106, 0, "entrance"], [122, 100, "linear"], [LOOP, 100]]), 0),
+      ])], {
+        ind: ind++, op: LOOP,
+        o: anim([[0, 100, "linear"], [FADE[0], 100, "exit"], [FADE[1], 0], [LOOP, 0]]),
+      }),
+    );
+  }
+
+  for (let i = 0; i < 11; i++) {
+    const cx = cxOf(i);
+    const t0 = 4 + i * 8;
+    layers.push(
+      layer(`instalment-${i}`, [group("b", [
+        rect(cx, base - hInst / 2, bw, hInst, 3),
+        gradFill([cx, base], [cx, base - hInst], [C.purple, C.cyan]),
+      ])], {
+        ind: ind++, op: LOOP, a: [cx, base, 0], p: [cx, base, 0],
+        s: anim([[0, [100, 0, 100], "linear"], [t0, [100, 0, 100], "settle"], [t0 + 22, [100, 100, 100], "linear"], [LOOP, [100, 100, 100]]]),
+        o: anim([[0, 100, "linear"], [FADE[0], 100, "exit"], [FADE[1], 0], [LOOP, 0]]),
+      }),
+    );
+  }
+
+  /* instalment level: drawn as the bars land */
+  layers.push(
+    layer("level", [group("l", [
+      line(x0 - 6, base - hInst, cxOf(10) + bw / 2 + 4, base - hInst),
+      stroke(C.neutral, 1.4, { opacity: 55, dash: [{ n: "d", nm: "dash", v: still(4) }, { n: "g", nm: "gap", v: still(5) }] }),
+      trim(0, anim([[0, 0, "linear"], [8, 0, "linear"], [104, 100, "linear"], [LOOP, 100]]), 0),
+    ])], {
+      ind: ind++, op: LOOP,
+      o: anim([[0, 100, "linear"], [FADE[0], 100, "exit"], [FADE[1], 0], [LOOP, 0]]),
+    }),
+  );
+
+  /* axis with twelve month ticks */
+  layers.push(
+    layer("axis", [
+      group("base", [line(x0 - 12, base + 8, cxOf(11) + bw / 2 + 12, base + 8), stroke(C.neutral, 1.5, { opacity: 40 })]),
+      group("ticks", [
+        ...Array.from({ length: 12 }, (_, i) => line(cxOf(i), base + 8, cxOf(i), base + 14)),
+        stroke(C.neutral, 1.5, { opacity: 40 }),
+      ]),
+    ], { ind: ind++, op: LOOP }),
+  );
+
+  return scene({ nm: "Hero F — Abrechnung", w: W, h: H, op: LOOP, layers });
+}
+
+/* ================================================================= *
+ * G — Kunde
+ * One household, three suppliers. The active contract moves from one
+ * supplier to the next: switching is a normal thing to do.
+ * ================================================================= */
+
+function kunde() {
+  const SUP = [120, 260, 400];
+  const supY = 70;
+  const trunkY = 150;
+  const roofTop = 190;
+  const hx = 260;
+  const ground = 268;
+  const layers = [];
+  let ind = 1;
+
+  const linkPts = (x) =>
+    x === hx
+      ? [[x, supY + 20], [x, roofTop - 6]]
+      : [[x, supY + 20], [x, trunkY], [hx, trunkY], [hx, roofTop - 6]];
+
+  /** 100 while supplier k holds the contract, 0 otherwise; seamless at the loop. */
+  const active = (k) => {
+    const s = k * 60;
+    const e = s + 60;
+    const keys = [];
+    if (k === 0) return anim([[0, 100, "linear"], [e - 10, 100, "exit"], [e, 0, "linear"], [LOOP - 10, 0, "entrance"], [LOOP, 100]]);
+    keys.push([0, 0, "linear"], [s - 10, 0, "entrance"], [s, 100, "linear"]);
+    if (k === 2) keys.push([e - 10, 100, "exit"], [LOOP, 0]);
+    else keys.push([e - 10, 100, "exit"], [e, 0, "linear"], [LOOP, 0]);
+    return anim(keys);
+  };
+
+  SUP.forEach((x, k) => {
+    const pts = linkPts(x);
+    layers.push(
+      layer(`pulse-${k}`, [group("p", [
+        poly(pts),
+        trim(0, 30, anim([[0, k * 40, "linear"], [LOOP, k * 40 + 360]])),
+        gradStroke([x, supY], [hx, roofTop], 4.5),
+      ])], { ind: ind++, op: LOOP, o: active(k) }),
+    );
+  });
+  SUP.forEach((x, k) => {
+    layers.push(layer(`link-${k}`, [group("l", [poly(linkPts(x)), stroke(C.neutral, 1.6, { opacity: 30 })])], { ind: ind++, op: LOOP }));
+  });
+
+  /* suppliers: a plain frame each, the active one lit */
+  SUP.forEach((x, k) => {
+    layers.push(
+      layer(`sup-active-${k}`, [
+        group("f", [rect(x, supY, 60, 40, 9), fill(C.purple, 12)]),
+        group("o", [rect(x, supY, 60, 40, 9), stroke(C.purple, 2.4)]),
+        group("mark", [ellipse(x, supY, 10, 10), fill(C.purple)]),
+      ], { ind: ind++, op: LOOP, o: active(k) }),
+    );
+    layers.push(
+      layer(`sup-${k}`, [
+        group("o", [rect(x, supY, 60, 40, 9), stroke(C.neutral, 2.2)]),
+        group("mark", [ellipse(x, supY, 10, 10), stroke(C.neutral, 1.8)]),
+      ], { ind: ind++, op: LOOP }),
+    );
+  });
+
+  /* house with a person at the door */
+  const doorX = hx + 22;
+  layers.push(
+    layer("person", [
+      group("head", [ellipse(doorX, ground - 30, 9, 9), stroke(C.purple, 2.2)]),
+      group("body", [arc(doorX, ground - 2, 12, 0, 180, 3), stroke(C.purple, 2.2)]),
+    ], { ind: ind++, op: LOOP }),
+  );
+  layers.push(
+    layer("house", [
+      group("roof", [poly([[hx - 66, roofTop + 44], [hx, roofTop - 6], [hx + 66, roofTop + 44]]), stroke(C.neutral, 2.6)]),
+      group("walls", [poly([[hx - 54, roofTop + 36], [hx - 54, ground], [hx + 54, ground], [hx + 54, roofTop + 36]]), stroke(C.neutral, 2.6)]),
+      group("window", [rect(hx - 24, ground - 30, 22, 20, 2), stroke(C.neutral, 2)]),
+    ], { ind: ind++, op: LOOP }),
+  );
+  layers.push(
+    layer("ground", [group("g", [line(60, ground, W - 60, ground), stroke(C.neutral, 1.5, { opacity: 40 })])],
+      { ind: ind++, op: LOOP }),
+  );
+
+  return scene({ nm: "Hero G — Kunde", w: W, h: H, op: LOOP, layers });
+}
+
+/* ================================================================= *
+ * H — Recht
+ * A balance. Energy on one pan, levies stacking onto the other; the beam
+ * tilts, holds, and returns.
+ * ================================================================= */
+
+function recht() {
+  const px = 260;
+  const py = 112;
+  const half = 112;
+  const ground = 268;
+  const TILT = [0, 3.4, 6.8, 10.2];
+  const ang = anim([
+    [0, 0, "linear"], [24, 0, "settle"],
+    [46, TILT[1], "settle"], [66, TILT[2], "settle"], [86, TILT[3], "linear"],
+    [128, TILT[3], "travel"], [166, 0, "linear"], [LOOP, 0],
+  ]);
+  const end = (side, deg) => {
+    const t = rad(deg);
+    return [px + side * half * Math.cos(t), py + side * half * Math.sin(t), 0];
+  };
+  /** Pan position keyframes follow the beam's rotation keyframes. */
+  const panPos = (side) =>
+    anim([
+      [0, end(side, 0), "linear"], [24, end(side, 0), "settle"],
+      [46, end(side, TILT[1]), "settle"], [66, end(side, TILT[2]), "settle"], [86, end(side, TILT[3]), "linear"],
+      [128, end(side, TILT[3]), "travel"], [166, end(side, 0), "linear"], [LOOP, end(side, 0)],
+    ]);
+
+  const layers = [];
+  let ind = 1;
+  const PLATE = 62;
+
+  const pan = (nm, side) => {
+    const id = ind++;
+    layers.push(
+      layer(nm, [
+        group("chains", [line(0, 0, -24, PLATE), line(0, 0, 24, PLATE), stroke(C.neutral, 1.6, { opacity: 70 })]),
+        group("plate", [line(-30, PLATE, 30, PLATE), stroke(C.neutral, 2.6)]),
+      ], { ind: id, op: LOOP, p: panPos(side) }),
+    );
+    return id;
+  };
+
+  const leftPan = pan("pan-energy", -1);
+  layers.push(
+    layer("energy", [group("b", [
+      poly([[3, PLATE - 30], [-8, PLATE - 14], [1, PLATE - 14], [-3, PLATE - 1], [8, PLATE - 17], [-1, PLATE - 17]], true),
+      fill(C.purple),
+    ])], { ind: ind++, op: LOOP, parent: leftPan }),
+  );
+
+  const rightPan = pan("pan-levies", 1);
+  [0, 1, 2].forEach((i) => {
+    const y = PLATE - 6.5 - i * 12;
+    const t0 = 26 + i * 20;
+    layers.push(
+      layer(`levy-${i}`, [group("r", [rect(0, y, 34, 11, 2), gradFill([0, PLATE], [0, PLATE - 36], [C.purple, C.cyan])])], {
+        ind: ind++, op: LOOP, parent: rightPan,
+        p: anim([[0, [0, -30, 0], "linear"], [t0, [0, -30, 0], "entrance"], [t0 + 16, [0, 0, 0], "linear"], [LOOP, [0, 0, 0]]]),
+        o: anim([[0, 0, "linear"], [t0, 0, "linear"], [t0 + 8, 100, "linear"], [128, 100, "exit"], [146, 0, "linear"], [LOOP, 0]]),
+      }),
+    );
+  });
+
+  layers.push(
+    layer("beam", [group("b", [line(px - half, py, px + half, py), stroke(C.neutral, 3)])], {
+      ind: ind++, op: LOOP, a: [px, py, 0], p: [px, py, 0], r: ang,
+    }),
+  );
+  layers.push(
+    layer("stand", [
+      group("post", [line(px, py, px, ground), stroke(C.neutral, 3)]),
+      group("foot", [line(px - 44, ground, px + 44, ground), stroke(C.neutral, 2.6)]),
+      group("pivot", [ellipse(px, py, 12, 12), fill(C.purple)]),
+    ], { ind: ind++, op: LOOP }),
+  );
+
+  return scene({ nm: "Hero H — Recht", w: W, h: H, op: LOOP, layers });
+}
+
 /* ================================================================= */
 
 const VARIANTS = [
@@ -424,6 +799,10 @@ const VARIANTS = [
   { name: "hero-tarifkurve", playerScene: "scene-4", build: tarifkurve },
   { name: "hero-zaehler", playerScene: "scene-5", build: zaehler },
   { name: "hero-prosumer", playerScene: "scene-6", build: prosumer },
+  { name: "hero-anlagen", playerScene: "scene-7", build: anlagen },
+  { name: "hero-abrechnung", playerScene: "scene-8", build: abrechnung },
+  { name: "hero-kunde", playerScene: "scene-9", build: kunde },
+  { name: "hero-recht", playerScene: "scene-10", build: recht },
 ];
 
 const PLAYER = "/Users/sauerer/oss/lottie-player/public/projects/energy-wiki";

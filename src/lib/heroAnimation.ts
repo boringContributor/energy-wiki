@@ -52,6 +52,42 @@ export const HERO_ANIMATIONS = [
     },
     usedFor: { de: "Thema „Sparten“", en: "Topic “Commodities”" },
   },
+  {
+    name: "hero-anlagen",
+    title: { de: "Energiehub", en: "Energy hub" },
+    note: {
+      de: "Alles hinter dem Zähler hängt an einem Hub: PV speist ein, Wärmepumpe, Speicher und Wallbox beziehen. Jedes Gerät tut das eine, was es tut – der Lüfter dreht, der Speicher lädt, die Wallbox blinkt.",
+      en: "Everything behind the meter hangs off one hub: PV feeds in, heat pump, battery and wallbox draw. Each device does the one thing it does – the fan spins, the battery charges, the wallbox blinks.",
+    },
+    usedFor: { de: "Thema „Anlagen & Technik“", en: "Topic “Systems & equipment”" },
+  },
+  {
+    name: "hero-abrechnung",
+    title: { de: "Abschlag & Abrechnung", en: "Instalments & statement" },
+    note: {
+      de: "Elf gleiche Abschläge wachsen Monat für Monat, die gestrichelte Linie zeichnet das Abschlagsniveau mit. Im zwölften Feld setzt die Jahresabrechnung die Differenz.",
+      en: "Eleven equal instalments rise month by month, the dashed line traces the instalment level. In the twelfth slot the annual statement settles the difference.",
+    },
+    usedFor: { de: "Thema „Abrechnung & Zahlung“", en: "Topic “Billing & payment”" },
+  },
+  {
+    name: "hero-kunde",
+    title: { de: "Lieferantenwechsel", en: "Supplier switch" },
+    note: {
+      de: "Ein Haushalt, drei Lieferanten. Der aktive Vertrag wandert alle Sekunde weiter – Wechseln ist ein normaler Vorgang, keine Ausnahme.",
+      en: "One household, three suppliers. The active contract moves on every second – switching is routine, not the exception.",
+    },
+    usedFor: { de: "Thema „Kunde, Portal & Prozesse“", en: "Topic “Customer, portal & processes”" },
+  },
+  {
+    name: "hero-recht",
+    title: { de: "Waage", en: "Balance" },
+    note: {
+      de: "Energie auf der einen Schale, Steuern und Umlagen stapeln sich auf der anderen. Der Balken neigt sich, hält, kehrt zurück.",
+      en: "Energy on one pan, taxes and levies stacking onto the other. The beam tilts, holds, returns.",
+    },
+    usedFor: { de: "Thema „Recht, Steuern & Umlagen“", en: "Topic “Law, taxes & levies”" },
+  },
 ] as const;
 
 export type HeroAnimationName = (typeof HERO_ANIMATIONS)[number]["name"];
@@ -59,15 +95,14 @@ export type HeroAnimationName = (typeof HERO_ANIMATIONS)[number]["name"];
 /** The scene on the home page hero. */
 export const HERO_ANIMATION: HeroAnimationName = "hero-prosumer";
 
-/**
- * Optional banner animation per topic. Categories without an entry simply get
- * a text-only header — better an honest gap than a scene that does not fit the
- * subject.
- */
-export const CATEGORY_ANIMATIONS: Partial<Record<CategoryId, HeroAnimationName>> =
-  {
-    grundlagen: "hero-netzpuls",
-    sparten: "energy-flow",
-    tarife: "hero-tarifkurve",
-    messwesen: "hero-zaehler",
-  };
+/** Banner animation per topic, each built for the subject of its section. */
+export const CATEGORY_ANIMATIONS: Record<CategoryId, HeroAnimationName> = {
+  grundlagen: "hero-netzpuls",
+  sparten: "energy-flow",
+  anlagen: "hero-anlagen",
+  tarife: "hero-tarifkurve",
+  messwesen: "hero-zaehler",
+  abrechnung: "hero-abrechnung",
+  kunde: "hero-kunde",
+  recht: "hero-recht",
+};

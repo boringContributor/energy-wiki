@@ -4,7 +4,7 @@ import { mkdirSync } from "node:fs";
 
 const OUT = ".shots/lottie";
 mkdirSync(OUT, { recursive: true });
-const scenes = process.argv[2]?.split(",") ?? ["scene-3", "scene-4", "scene-5", "scene-6"];
+const scenes = process.argv[2]?.split(",") ?? ["scene-3", "scene-4", "scene-5", "scene-6", "scene-7", "scene-8", "scene-9", "scene-10"];
 const frames = (process.argv[3] ?? "0,60,120,179").split(",").map(Number);
 
 const b = await chromium.launch();
